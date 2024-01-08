@@ -1,7 +1,7 @@
 <template>
   <v-app-bar app>
     <v-icon icon="mdi-circle-slice-4" />
-    Merchant Services
+    Fee Calculator
     <v-spacer></v-spacer>
     <v-menu open-on-hover>
       <template v-slot:activator="{ props }">

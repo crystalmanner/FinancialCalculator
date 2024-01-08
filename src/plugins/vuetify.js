@@ -10,12 +10,12 @@ import 'vuetify/styles'
 
 // Composables
 import { createVuetify } from 'vuetify'
-// import {
-//   VDataTable,
-//   VDataTableServer,
-//   VDataTableVirtual,
-// } from "vuetify";
-// import { VStepper } from 'vuetify'
+import {
+  VDataTable,
+  VDataTableServer,
+  VDataTableVirtual,
+} from "vuetify/labs/VDataTable";
+import { VStepper } from 'vuetify/labs/VStepper'
 
 // https://vuetifyjs.com/en/introduction/why-vuetify/#feature-guides
 export default createVuetify({
@@ -29,10 +29,10 @@ export default createVuetify({
       },
     },
   },
-  // components: {
-  //   VDataTable,
-  //   VDataTableServer,
-  //   VDataTableVirtual,
-  //   VStepper,
-  // },
+  components: {
+    VDataTable,
+    VDataTableServer,
+    VDataTableVirtual,
+    VStepper,
+  },
 })
