@@ -38,7 +38,7 @@
         <v-col cols="12" lg="8" md="8" sm="12">
           <div v-if="validForm">
             <div class="d-flex">
-              <h3>Advisory</h3><v-spacer></v-spacer>
+              <h3>% Fee</h3><v-spacer></v-spacer>
               <p>{{ $formatNumberWithCommas(totalPercentFee) }}</p>
             </div>
             <div class="d-flex">
