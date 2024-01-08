@@ -10,13 +10,13 @@
               type="number" prefix="$" hint="The total value of all your accounts which will be charged a fee"
               dense></v-text-field>
             <v-text-field v-model.number="averageExpectedGrowthRate"
-              :rules="[$numberGreaterThanNegativeRule, numberSmallerThan12]" label="Average Expected Growth Rate"
-              suffix="%" hint="How much do you expect to earn on an average annual basis?" dense></v-text-field>
+              :rules="[$numberGreaterThanNegativeRule, numberSmallerThan12]" label="Average Annual Return" suffix="%"
+              hint="How much do you expect to earn on an average annual basis?" dense></v-text-field>
             <v-text-field v-model.number="annualDistribution" :rules="[$numberGreaterThanNegativeRule]"
               label="Annual Distribution" prefix="$"
               hint="How much would you like to take out of your accounts for living expenses?" dense></v-text-field>
             <v-text-field v-model.number="annualIncreaseDistributionRate"
-              :rules="[$numberGreaterThanNegativeRule, numberSmallerThan10]" label="Average Expected Growth Rate"
+              :rules="[$numberGreaterThanNegativeRule, numberSmallerThan10]" label="Average % Increase to Distribution"
               suffix="%"
               hint="How much would you like to increase your annual living expense distributions to offset inflation?"
               dense></v-text-field>
@@ -38,7 +38,7 @@
         <v-col cols="12" lg="8" md="8" sm="12">
           <div v-if="validForm">
             <div class="d-flex">
-              <h3>% Advisory Fee</h3><v-spacer></v-spacer>
+              <h3>Advisory</h3><v-spacer></v-spacer>
               <p>{{ $formatNumberWithCommas(totalPercentFee) }}</p>
             </div>
             <div class="d-flex">
@@ -68,6 +68,16 @@
           <div v-else class="mt-2 text-center">
             <h3 class="text-red-accent-2">Please input valid values.</h3>
           </div>
+        </v-col>
+        <v-col cols="12" lg="12" md="12" sm="12">
+          <p class="text-subtitle-2 text-center">Disclaimer: The calculation provided by this fee calculator is intended
+            for
+            illustrative purposes only and
+            does not include the impact of taxes, investment expenses, required minimum distributions, or other potential
+            financial factors. It is not intended to provide specific financial, investment, tax, legal, or accounting
+            advice. For personalized advice, please consult with a qualified professional. The results are based on the
+            information provided and certain assumptions about the future, which may not be accurate. We do not guarantee
+            the accuracy or applicability of this calculation to your individual circumstances.</p>
         </v-col>
       </v-row>
     </v-responsive>
@@ -205,8 +215,8 @@ export default {
           title: '',
           width: '25%',
         },
-        { key: 'flatFeeAccountValue', title: 'Flat Fee Account Value', width: '25%' },
-        { key: 'percentAccountValue', title: 'Values of ' + this.advisoryFeeRate + '% Account Value', width: '25%' },
+        { key: 'flatFeeAccountValue', title: 'Flat Fee - Account Value', width: '25%' },
+        { key: 'percentAccountValue', title: this.advisoryFeeRate + '% Fee - Account Value', width: '25%' },
         { key: 'difference', title: 'Difference', width: '25%' },
       ]
     },
