@@ -248,6 +248,8 @@ export default {
       let percentAccountValue = this.accountValue;
       let flatFeeAccountValue = this.accountValue;
       let advisoryFeeRate = this.advisoryFeeRate;
+      this.totalPercentFee = 0;
+      this.totalFlatFee = 0;
       while (i < this.periodLength) {
         i++;
         flatFeeAccountValue = percentAccountValue * (100 + this.averageExpectedGrowthRate) / 100 - (distribution + flatFee);
