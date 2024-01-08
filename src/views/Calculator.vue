@@ -145,17 +145,17 @@ export default {
         labels: [],
         datasets: [
           {
-            label: "Flat Fee Account Value",
+            label: "% Fee Account Value",
             data: [],
-            backgroundColor: "rgba(71,151,255,.5)",
+            backgroundColor: "rgba(0,112,192,.9)",
             borderColor: "#4897FF",
             borderWidth: 1,
             fill: true,
           },
           {
-            label: "% Fee Account Value",
+            label: "Flat Fee Account Value",
             data: [],
-            backgroundColor: "rgba(136,221,155,.5)",
+            backgroundColor: "rgba(0,176,80,.9)",
             borderColor: "#88DD9B",
             borderWidth: 1,
             fill: true,
@@ -225,17 +225,17 @@ export default {
         labels: [],
         datasets: [
           {
-            label: "Flat Fee Account Value",
+            label: "% Fee Account Value",
             data: [],
-            backgroundColor: "rgba(71,151,255,.5)",
+            backgroundColor: "rgba(0,112,192,.9)",
             borderColor: "#4897FF",
             borderWidth: 1,
             fill: true,
           },
           {
-            label: "% Fee Account Value",
+            label: "Flat Fee Account Value",
             data: [],
-            backgroundColor: "rgba(136,221,155,.5)",
+            backgroundColor: "rgba(0,176,80,.9)",
             borderColor: "#88DD9B",
             borderWidth: 1,
             fill: true,
@@ -263,8 +263,8 @@ export default {
           'difference': this.$formatNumberWithCommas(flatFeeAccountValue - percentAccountValue),
         });
         chartData.labels.push('Year ' + i);
-        chartData.datasets[0].data.push(flatFeeAccountValue.toFixed(2));
-        chartData.datasets[1].data.push(percentAccountValue.toFixed(2));
+        chartData.datasets[0].data.push(percentAccountValue.toFixed(2));
+        chartData.datasets[1].data.push(flatFeeAccountValue.toFixed(2));
         this.totalPercentFee += percentFee;
         this.totalFlatFee += flatFee;
       }
