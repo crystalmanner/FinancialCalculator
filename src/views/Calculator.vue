@@ -37,6 +37,14 @@
         </v-col>
         <v-col cols="12" lg="8" md="8" sm="12">
           <div v-if="validForm">
+            <h2>FACE VALUE&nbsp;
+              <v-tooltip location="bottom">
+                <template v-slot:activator="{ props }">
+                  <v-icon icon="mdi-help-circle" class="mb-1 cursor-pointer" size="md" v-bind="props" start />
+                </template>
+                <span>Face Value is the difference of the two cumulative fee amounts over the period selected.</span>
+              </v-tooltip>
+            </h2>
             <div class="d-flex">
               <h3>% Fee</h3><v-spacer></v-spacer>
               <p>{{ $formatNumberWithCommas(totalPercentFee) }}</p>
@@ -48,20 +56,42 @@
             <hr>
             <div class="d-flex">
               <h3>Difference</h3><v-spacer></v-spacer>
-              <p>{{ $formatNumberWithCommas(totalPercentFee - totalFlatFee) }}</p>
+              <p>{{ $formatNumberWithCommas(Math.abs(totalPercentFee - totalFlatFee)) }}</p>
+            </div>
+            <h2 class="mt-2">REAL VALUE&nbsp;
+              <v-tooltip location="bottom">
+                <template v-slot:activator="{ props }">
+                  <v-icon icon="mdi-help-circle" class="mb-1 cursor-pointer" size="md" v-bind="props" start />
+                </template>
+                <span>Real Value is the difference in ending account value assuming the decreased fees remained invested
+                  over the period selected.</span>
+              </v-tooltip>
+            </h2>
+            <div class="d-flex">
+              <h3>% Fee</h3><v-spacer></v-spacer>
+              <p>{{ $formatNumberWithCommas(percentAccountValue) }}</p>
+            </div>
+            <div class="d-flex">
+              <h3>Flat Fee</h3><v-spacer></v-spacer>
+              <p>{{ $formatNumberWithCommas(flatFeeAccountValue) }}</p>
+            </div>
+            <hr>
+            <div class="d-flex">
+              <h3>Difference</h3><v-spacer></v-spacer>
+              <p>{{ $formatNumberWithCommas(Math.abs(percentAccountValue - flatFeeAccountValue)) }}</p>
             </div>
             <v-tabs v-model="tab" color="primary" align-tabs="left">
-              <v-tab :value="1">Table</v-tab>
-              <v-tab :value="2">Chart</v-tab>
+              <v-tab :value="1">Chart</v-tab>
+              <v-tab :value="2">Table</v-tab>
             </v-tabs>
             <v-window v-model="tab">
               <v-window-item :value="1">
-                <v-data-table :headers="headers" :items="tableData"></v-data-table>
-              </v-window-item>
-              <v-window-item :value="2">
                 <div style="max-width: 760px;">
                   <Line id="line-chart" width="600px" height="300px" :options="chartOptions" :data="chartData" />
                 </div>
+              </v-window-item>
+              <v-window-item :value="2">
+                <v-data-table :headers="headers" :items="tableData"></v-data-table>
               </v-window-item>
             </v-window>
           </div>
@@ -129,6 +159,8 @@ export default {
       tableData: [],
       totalPercentFee: 0,
       totalFlatFee: 0,
+      flatFeeAccountValue: 0,
+      percentAccountValue: 0,
       chartOptions: {
         responsive: true,
         lineTension: 1,
@@ -279,6 +311,8 @@ export default {
         chartData.datasets[1].data.push(flatFeeAccountValue.toFixed(2));
         this.totalPercentFee += percentFee;
         this.totalFlatFee += flatFee;
+        this.flatFeeAccountValue = flatFeeAccountValue;
+        this.percentAccountValue = percentAccountValue;
       }
 
       this.chartData = chartData;
@@ -334,5 +368,9 @@ export default {
 .arrow-right {
   align-items: center;
   display: flex;
+}
+
+.cursor-pointer {
+  cursor: pointer;
 }
 </style>
