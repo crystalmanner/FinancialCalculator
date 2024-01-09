@@ -6,15 +6,17 @@
       <v-row class="pa-2 mt-4">
         <v-col cols="12" lg="4" md="4" sm="12">
           <v-form v-model="validForm">
-            <v-text-field v-model.number="accountValue" :rules="[$numberGreaterThanNegativeRule]" label="Account(s) Value"
-              type="number" prefix="$" hint="The total value of all your accounts which will be charged a fee"
-              dense></v-text-field>
+            <v-text-field v-model="formattedAccountValue" :rules="[$textGreaterThanNegativeRule, textSmallerThan12000000]"
+              label="Account(s) Value" type="text" prefix="$"
+              hint="The total value of all your accounts which will be charged a fee" @blur="formatAccountValue"
+              @input="stripAccountValueFormatting" dense></v-text-field>
             <v-text-field v-model.number="averageExpectedGrowthRate"
               :rules="[$numberGreaterThanNegativeRule, numberSmallerThan12]" label="Average Annual Return" suffix="%"
               hint="How much do you expect to earn on an average annual basis?" dense></v-text-field>
-            <v-text-field v-model.number="annualDistribution" :rules="[$numberGreaterThanNegativeRule]"
-              label="Annual Distribution" prefix="$"
-              hint="How much would you like to take out of your accounts for living expenses?" dense></v-text-field>
+            <v-text-field v-model="formattedAnnualDistribution" :rules="[$textGreaterThanNegativeRule]"
+              label="Annual Distribution" prefix="$" type="text"
+              hint="How much would you like to take out of your accounts for living expenses?"
+              @blur="formatAnnualDistribution" @input="stripAnnualDistributionFormatting" dense></v-text-field>
             <v-text-field v-model.number="annualIncreaseDistributionRate"
               :rules="[$numberGreaterThanNegativeRule, numberSmallerThan10]" label="Average % Increase to Distribution"
               suffix="%"
@@ -26,13 +28,15 @@
             <v-text-field v-model.number="annualIncreaseAdvisoryFeeRate" :rules="[$numberGreaterThanNegativeRule]"
               label="Annual Increase to % Advisory Fee" suffix="%" hint="Will your advisor increase this fee?"
               dense></v-text-field>
-            <v-text-field v-model.number="flatFee" :rules="[$numberGreaterThanNegativeRule]" label="Flat Fee" prefix="$"
-              hint="What is the proposed dollar amount of the flat fee?" dense></v-text-field>
+            <v-text-field v-model="formattedFlatFee" :rules="[$textGreaterThanNegativeRule]" label="Flat Fee" prefix="$"
+              hint="What is the proposed dollar amount of the flat fee?" type="text" @blur="formatFlatFee"
+              @input="stripFlatFeeFormatting" dense></v-text-field>
             <v-text-field v-model.number="annualIncreaseFlatFeeRate" :rules="[$numberGreaterThanNegativeRule]"
               label="Annual Increase to Flat Fee" suffix="%" hint="Will the flat fee increase annually?"
               dense></v-text-field>
-            <v-text-field v-model.number="periodLength" :rules="periodLengthRules" label="Period Length" suffix="year(s)"
-              hint="How many years would you like to use for this calculation?" dense></v-text-field>
+            <v-text-field v-model.number="periodLength" :rules="[...periodLengthRules, numberSmallerThan50]"
+              label="Period Length" suffix="year(s)" hint="How many years would you like to use for this calculation?"
+              dense></v-text-field>
           </v-form>
         </v-col>
         <v-col cols="12" lg="8" md="8" sm="12">
@@ -148,12 +152,15 @@ export default {
     return {
       validForm: true,
       accountValue: 2000000,
+      formattedAccountValue: '2,000,000',
       averageExpectedGrowthRate: 7,
       annualDistribution: 80000,
+      formattedAnnualDistribution: '80,000',
       annualIncreaseDistributionRate: 2,
       advisoryFeeRate: 1,
       annualIncreaseAdvisoryFeeRate: 0,
       flatFee: 10000,
+      formattedFlatFee: '10,000',
       annualIncreaseFlatFeeRate: 3,
       periodLength: 25,
       tab: null,
@@ -196,7 +203,7 @@ export default {
           {
             label: "% Fee Account Value",
             data: [],
-            backgroundColor: "rgba(0,112,192,.9)",
+            backgroundColor: "rgba(0,112,192,.8)",
             borderColor: "#4897FF",
             borderWidth: 1,
             fill: true,
@@ -204,7 +211,7 @@ export default {
           {
             label: "Flat Fee Account Value",
             data: [],
-            backgroundColor: "rgba(0,176,80,.9)",
+            backgroundColor: "rgba(0,176,80,.8)",
             borderColor: "#88DD9B",
             borderWidth: 1,
             fill: true,
@@ -266,6 +273,39 @@ export default {
     });
   },
   methods: {
+    formatAccountValue() {
+      // When the user leaves the field, format the number with commas
+      this.formattedAccountValue = new Intl.NumberFormat().format(this.accountValue);
+    },
+    stripAccountValueFormatting(event) {
+      // When the user inputs text, strip non-numeric characters and save the raw number
+      const digits = event.target.value.replace(/[^\d]/g, '');
+      this.accountValue = digits;
+      // Update the displayed value to keep the cursor in the correct position
+      this.formattedAccountValue = digits;
+    },
+    formatAnnualDistribution() {
+      // When the user leaves the field, format the number with commas
+      this.formattedAnnualDistribution = new Intl.NumberFormat().format(this.annualDistribution);
+    },
+    stripAnnualDistributionFormatting(event) {
+      // When the user inputs text, strip non-numeric characters and save the raw number
+      const digits = event.target.value.replace(/[^\d]/g, '');
+      this.annualDistribution = digits;
+      // Update the displayed value to keep the cursor in the correct position
+      this.formattedAnnualDistribution = digits;
+    },
+    formatFlatFee() {
+      // When the user leaves the field, format the number with commas
+      this.formattedFlatFee = new Intl.NumberFormat().format(this.flatFee);
+    },
+    stripFlatFeeFormatting(event) {
+      // When the user inputs text, strip non-numeric characters and save the raw number
+      const digits = event.target.value.replace(/[^\d]/g, '');
+      this.flatFee = digits;
+      // Update the displayed value to keep the cursor in the correct position
+      this.formattedFlatFee = digits;
+    },
     calculate() {
       this.tableData = [];
       let i = 0;
@@ -276,7 +316,7 @@ export default {
           {
             label: "% Fee Account Value",
             data: [],
-            backgroundColor: "rgba(0,112,192,.9)",
+            backgroundColor: "rgba(0,112,192,.8)",
             borderColor: "#4897FF",
             borderWidth: 1,
             fill: true,
@@ -284,18 +324,18 @@ export default {
           {
             label: "Flat Fee Account Value",
             data: [],
-            backgroundColor: "rgba(0,176,80,.9)",
+            backgroundColor: "rgba(0,176,80,.8)",
             borderColor: "#88DD9B",
             borderWidth: 1,
             fill: true,
           },
         ],
       };
-      let distribution = this.annualDistribution;
+      let distribution = parseFloat(this.annualDistribution);
       let percentFee = this.accountValue * this.advisoryFeeRate / 100;
-      let flatFee = this.flatFee;
-      let percentAccountValue = this.accountValue;
-      let flatFeeAccountValue = this.accountValue;
+      let flatFee = parseFloat(this.flatFee);
+      let percentAccountValue = parseFloat(this.accountValue);
+      let flatFeeAccountValue = parseFloat(this.accountValue);
       let advisoryFeeRate = this.advisoryFeeRate;
       this.totalPercentFee = 0;
       this.totalFlatFee = 0;
@@ -323,14 +363,6 @@ export default {
       }
 
       this.chartData = chartData;
-      // this.renderChart();
-    },
-    smallerThanAccountValue(value) {
-      const numericValue = parseFloat(value);
-      if (!isNaN(numericValue) && numericValue > this.accountValue) {
-        return `Payment should be lower than account(s) value.`; // Validation fails
-      }
-      return true; // Validation passes
     },
     numberSmallerThan12(value) {
       const numericValue = parseFloat(value);
@@ -345,7 +377,21 @@ export default {
         return `Annual increase to distribution should not be greater than 10%.`; // Validation fails
       }
       return true; // Validation passes
-    }
+    },
+    numberSmallerThan50(value) {
+      const numericValue = parseFloat(value);
+      if (!isNaN(numericValue) && numericValue > 50) {
+        return `Period length should not be greater than 50 years.`; // Validation fails
+      }
+      return true; // Validation passes
+    },
+    textSmallerThan12000000(value) {
+      const numericValue = parseFloat(value.replace(/[^\d]/g, ''));
+      if (!isNaN(numericValue) && numericValue > 12000000) {
+        return `Account(s) value can not be greater than 12,000,000.`; // Validation fails
+      }
+      return true; // Validation passes
+    },
   },
 };
 </script>

@@ -21,6 +21,13 @@ const myPlugin = {
             }
             return 'Please provide positive value'; // Validation fails
         };
+        app.config.globalProperties.$textGreaterThanNegativeRule = (value) => {
+            const numericValue = parseFloat(value.replace(/[^\d]/g, ''));
+            if (!isNaN(numericValue) && numericValue >= 0) {
+                return true; // Validation passes
+            }
+            return 'Please provide positive value'; // Validation fails
+        };
         app.config.globalProperties.$integerRule = (value) => {
             if (Number.isInteger(Number(value))) {
                 return true; // Value is an integer
