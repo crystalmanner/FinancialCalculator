@@ -91,7 +91,8 @@
                 </div>
               </v-window-item>
               <v-window-item :value="2">
-                <v-data-table :headers="headers" :items="tableData"></v-data-table>
+                <v-data-table :headers="headers" :items="tableData" :items-per-page="-1"
+                  :items-per-page-options="pageOptions"></v-data-table>
               </v-window-item>
             </v-window>
           </div>
@@ -157,6 +158,12 @@ export default {
       periodLength: 25,
       tab: null,
       tableData: [],
+      pageOptions: [
+        { value: 5, title: '5' },
+        { value: 10, title: '10' },
+        { value: 25, title: '25' },
+        { value: -1, title: '$vuetify.dataFooter.itemsPerPageAll' }
+      ],
       totalPercentFee: 0,
       totalFlatFee: 0,
       flatFeeAccountValue: 0,
