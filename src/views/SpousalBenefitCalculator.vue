@@ -37,17 +37,17 @@
         <v-col cols="12" lg="6" md="6" sm="12">
           <div v-if="validForm">
             <div class="d-flex">
-              <h3>Payment from Lower Earner's benefit</h3><v-spacer></v-spacer>
-              <p>{{ $formatNumberWithCommas(lowerEarnerPayment) }}</p>
+              <h3>Payment from Lower Earner's Benefit</h3><v-spacer></v-spacer>
+              <p>{{ $formatNumberWithCommas(Math.floor(lowerEarnerPayment)) }}</p>
             </div>
             <div class="d-flex">
-              <h3>Spousal excessc</h3><v-spacer></v-spacer>
-              <p>{{ $formatNumberWithCommas(spousalExcess) }}</p>
+              <h3>Payment from Spousal Payment</h3><v-spacer></v-spacer>
+              <p>{{ $formatNumberWithCommas(Math.floor(spousalExcess)) }}</p>
             </div>
             <hr>
             <div class="d-flex">
-              <h3><strong>Spousal excess</strong></h3><v-spacer></v-spacer>
-              <p><strong>{{ $formatNumberWithCommas(lowerEarnerPayment + spousalExcess) }}</strong></p>
+              <h3><strong>Total Payment</strong></h3><v-spacer></v-spacer>
+              <p><strong>{{ $formatNumberWithCommas(Math.floor(lowerEarnerPayment + spousalExcess)) }}</strong></p>
             </div>
 
           </div>
