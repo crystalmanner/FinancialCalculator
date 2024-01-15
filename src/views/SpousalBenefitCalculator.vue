@@ -41,12 +41,12 @@
               <p>{{ $formatNumberWithCommas(Math.floor(lowerEarnerPayment)) }}</p>
             </div>
             <div class="d-flex">
-              <h3>Payment from Spousal Payment</h3><v-spacer></v-spacer>
+              <h3>Payment from Spousal Benefit</h3><v-spacer></v-spacer>
               <p>{{ $formatNumberWithCommas(Math.floor(spousalExcess)) }}</p>
             </div>
             <hr>
             <div class="d-flex">
-              <h3><strong>Total Payment</strong></h3><v-spacer></v-spacer>
+              <h3><strong>Total Benefit</strong></h3><v-spacer></v-spacer>
               <p><strong>{{ $formatNumberWithCommas(Math.floor(lowerEarnerPayment + spousalExcess)) }}</strong></p>
             </div>
 
