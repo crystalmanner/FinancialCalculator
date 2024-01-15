@@ -3,7 +3,7 @@
     <v-responsive class="fill-height">
       <h1>Social Security Spousal Benefits Calculator</h1>
       <hr>
-      <v-row class="pa-2">
+      <v-row class="pa-2 mt-2">
         <v-col cols="12" lg="6" md="6" sm="12">
           <v-form v-model="validForm">
             <div>
