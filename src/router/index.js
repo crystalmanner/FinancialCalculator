@@ -8,8 +8,18 @@ const routes = [
     children: [
       {
         path: '',
-        name: 'Mortgage',
-        component: () => import('@/views/Calculator.vue'),
+        name: 'FeeCalculator',
+        component: () => import('@/views/FeeCalculator.vue'),
+      },
+      {
+        path: '/spousalbenefitcalculator',
+        name: 'SpousalBenefitCalculator',
+        component: () => import('@/views/SpousalBenefitCalculator.vue'),
+      },
+      {
+        path: '/portfoliocalculator',
+        name: 'PortfolioCalculator',
+        component: () => import('@/views/PortfolioCalculator.vue'),
       },
     ],
   },
