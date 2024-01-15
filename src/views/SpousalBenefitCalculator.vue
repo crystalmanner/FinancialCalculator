@@ -83,7 +83,7 @@ export default {
       higherEarnerDOB: "01/15/1960",
       lowerEarnerDOB: "01/15/1960",
       higherEarnerFileDate: "01/15/2027",
-      lowerEarnerFileDate: "01/05/2027",
+      lowerEarnerFileDate: "01/15/2027",
       higherEarnerBenefit: 3000,
       formattedHigherEarnerBenefit: '3,000',
       lowerEarnerBenefit: 1200,
@@ -158,6 +158,9 @@ export default {
       this.formattedLowerEarnerBenefit = digits;
     },
     calculate() {
+      // console.log(this.lowerEarnerFileDate, "---this.lowerEarnerFileDate---")
+      // console.log(this.addYearsToDate(this.lowerEarnerDOB, 62), "---new Date(this.addYearsToDate(this.lowerEarnerDOB, 62)---")
+      // console.log(this.addYearsToDate(this.lowerEarnerDOB, 70), "---new Date(this.addYearsToDate(this.lowerEarnerDOB, 62)---")
       if (this.lowerEarnerDOB && this.lowerEarnerFileDate) {
         if ((new Date(this.addYearsToDate(this.lowerEarnerDOB, 62)) > new Date(this.lowerEarnerFileDate)) || (new Date(this.addYearsToDate(this.lowerEarnerDOB, 70)) < new Date(this.lowerEarnerFileDate))) {
           this.validForm = false;
@@ -204,6 +207,8 @@ export default {
         this.lowerEarnerPayment = this.lowerEarnerBenefit * (100 + (retiredMonths - fullRetireMonths) * 2 / 3) / 100;
       }
       retiredMonths = this.getMonthOffset(new Date(this.lowerEarnerDOB), this.getMaxDate(new Date(this.lowerEarnerFileDate), new Date(this.higherEarnerFileDate)));
+      console.log(fullRetireMonths, "-------------fullRetireMonths------")
+      console.log(retiredMonths, "-----fullRetireMonths----")
       if (fullRetireMonths > retiredMonths) {
         if ((fullRetireMonths - retiredMonths) > 36) {
           this.spousalExcess = spousalPayment * (100 - 36 * 25 / 36 - (fullRetireMonths - retiredMonths - 36) * 5 / 12) / 100;
