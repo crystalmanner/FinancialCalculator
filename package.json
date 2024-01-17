@@ -24,7 +24,7 @@
     "vue-chartjs": "^5.2.0",
     "vue-country-flag-next": "^2.3.2",
     "vue-router": "^4.0.0",
-    "vuetify": "^3.0.0",
+    "vuetify": "^3.4.10",
     "webfontloader": "^1.0.0"
   },
   "devDependencies": {

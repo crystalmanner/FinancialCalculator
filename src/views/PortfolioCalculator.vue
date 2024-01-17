@@ -184,7 +184,7 @@
                 </div>
               </v-window-item>
               <v-window-item :value="2">
-                <v-data-table :headers="headers" item-key="year" :items="tableData" :items-per-page="-1"
+                <v-data-table :headers="headers" :items="tableData" :items-per-page="-1"
                   :items-per-page-options="pageOptions"></v-data-table>
               </v-window-item>
             </v-window>
@@ -373,6 +373,39 @@ export default {
     },
   },
   computed: {
+    headers() {
+      return [
+        {
+          title: '',
+          align: 'start',
+          value: 'year',
+        },
+        {
+          title: 'Current Portfolio',
+          align: 'center',
+          value: 'current',
+          children: [
+            { title: 'Account Value', value: 'currentAccountValue' },
+            { title: 'Distribution', value: 'currentDistribution' },
+            { title: 'Advisory Expense', value: 'currentAdvisoryExpense' },
+            { title: 'Investment Expense', value: 'currentInvestmentExpense' },
+            { title: 'Total Expense', value: 'currentTotalExpense' },
+          ]
+        },
+        {
+          title: 'Proposed Portfolio',
+          align: 'center',
+          value: 'proposed',
+          children: [
+            { title: 'Account Value', value: 'proposedAccountValue' },
+            { title: 'Distribution', value: 'proposedDistribution' },
+            { title: 'Advisory Expense', value: 'proposedAdvisoryExpense' },
+            { title: 'Investment Expense', value: 'proposedInvestmentExpense' },
+            { title: 'Total Expense', value: 'proposedTotalExpense' },
+          ]
+        }
+      ]
+    },
     // headers() {
     //   return [
     //     {
@@ -380,51 +413,18 @@ export default {
     //       title: '',
     //       key: 'year',
     //     },
-    //     {
-    //       title: 'Current Portfolio',
-    //       align: 'center',
-    //       key: 'current',
-    //       children: [
-    //         { title: 'Account Value', key: 'currentAccountValue' },
-    //         { title: 'Distribution', key: 'currentDistribution' },
-    //         { title: 'Advisory Expense', key: 'currentAdvisoryExpense' },
-    //         { title: 'Investment Expense', key: 'currentInvestmentExpense' },
-    //         { title: 'Total Expense', key: 'currentTotalExpense' },
-    //       ]
-    //     },
-    //     {
-    //       title: 'Proposed Portfolio',
-    //       align: 'center',
-    //       key: 'proposed',
-    //       children: [
-    //         { title: 'Account Value', key: 'proposedAccountValue' },
-    //         { title: 'Distribution', key: 'proposedDistribution' },
-    //         { title: 'Advisory Expense', key: 'proposedAdvisoryExpense' },
-    //         { title: 'Investment Expense', key: 'proposedInvestmentExpense' },
-    //         { title: 'Total Expense', key: 'proposedTotalExpense' },
-    //       ]
-    //     }
+    //     { title: 'Account Value', key: 'currentAccountValue' },
+    //     { title: 'Distribution', key: 'currentDistribution' },
+    //     { title: 'Advisory Expense', key: 'currentAdvisoryExpense' },
+    //     { title: 'Investment Expense', key: 'currentInvestmentExpense' },
+    //     { title: 'Total Expense', key: 'currentTotalExpense' },
+    //     { title: 'Account Value', key: 'proposedAccountValue' },
+    //     { title: 'Distribution', key: 'proposedDistribution' },
+    //     { title: 'Advisory Expense', key: 'proposedAdvisoryExpense' },
+    //     { title: 'Investment Expense', key: 'proposedInvestmentExpense' },
+    //     { title: 'Total Expense', key: 'proposedTotalExpense' },
     //   ]
     // },
-    headers() {
-      return [
-        {
-          align: 'start',
-          title: '',
-          key: 'year',
-        },
-        { title: 'Account Value', key: 'currentAccountValue' },
-        { title: 'Distribution', key: 'currentDistribution' },
-        { title: 'Advisory Expense', key: 'currentAdvisoryExpense' },
-        { title: 'Investment Expense', key: 'currentInvestmentExpense' },
-        { title: 'Total Expense', key: 'currentTotalExpense' },
-        { title: 'Account Value', key: 'proposedAccountValue' },
-        { title: 'Distribution', key: 'proposedDistribution' },
-        { title: 'Advisory Expense', key: 'proposedAdvisoryExpense' },
-        { title: 'Investment Expense', key: 'proposedInvestmentExpense' },
-        { title: 'Total Expense', key: 'proposedTotalExpense' },
-      ]
-    },
   },
   created() {
     this.$nextTick(() => {
