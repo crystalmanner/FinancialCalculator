@@ -166,6 +166,9 @@
                 </h4>
               </div>
             </div>
+            <div class="mt-4" style="max-width: 760px;">
+              <Line id="line-chart" width="600px" height="300px" :options="chartOptions" :data="chartData" />
+            </div>
           </div>
           <div v-else class="mt-2 text-center">
             <h3 class="text-red-accent-2">Please input valid values.</h3>
@@ -173,22 +176,9 @@
         </v-col>
         <v-col cols="12" lg="12" md="12" sm="12">
           <div v-if="validForm">
-            <v-tabs v-model="tab" color="primary" align-tabs="left">
-              <v-tab :value="1">Chart</v-tab>
-              <v-tab :value="2">Table</v-tab>
-            </v-tabs>
-            <v-window v-model="tab">
-              <v-window-item :value="1">
-                <div style="max-width: 760px;">
-                  <Line id="line-chart" width="600px" height="300px" :options="chartOptions" :data="chartData" />
-                </div>
-              </v-window-item>
-              <v-window-item :value="2">
-                <v-data-table :headers="headers" :items="tableData" :items-per-page="-1"
-                  :items-per-page-options="pageOptions" class="portfolio-table mt-4">
-                </v-data-table>
-              </v-window-item>
-            </v-window>
+            <v-data-table :headers="headers" :items="tableData" :items-per-page="-1" :items-per-page-options="pageOptions"
+              class="portfolio-table mt-4">
+            </v-data-table>
           </div>
         </v-col>
         <v-col cols="12" lg="12" md="12" sm="12">
@@ -268,7 +258,6 @@ export default {
       proposedTotalFlatFee: 0,
       proposedFlatFeeAccountValue: 0,
       proposedPercentAccountValue: 0,
-      tab: null,
       tableData: [],
       pageOptions: [
         { value: 5, title: '5' },
