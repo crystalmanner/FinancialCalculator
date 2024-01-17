@@ -217,7 +217,7 @@ export default {
         }
       } else {
         retiredMonths = Math.min(retiredMonths, 70 * 12);
-        this.spousalExcess = spousalPayment;
+        this.spousalExcess = spousalPayment + this.lowerEarnerBenefit - this.lowerEarnerPayment;
       }
     },
     getMonthOffset(startDate, endDate) {
