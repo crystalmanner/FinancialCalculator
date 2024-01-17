@@ -32,6 +32,6 @@ export default createVuetify({
     // VDataTable,
     // VDataTableServer,
     // VDataTableVirtual,
-    // VDatePicker,
+    // VDatePicker
   },
 })

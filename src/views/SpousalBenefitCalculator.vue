@@ -38,16 +38,16 @@
           <div v-if="validForm">
             <div class="d-flex">
               <h3>Payment from Lower Earner's Benefit</h3><v-spacer></v-spacer>
-              <p>{{ $formatNumberWithCommas(Math.floor(lowerEarnerPayment)) }}</p>
+              <p>{{ $formatNumberWithCommas(customRound(lowerEarnerPayment)) }}</p>
             </div>
             <div class="d-flex">
               <h3>Payment from Spousal Benefit</h3><v-spacer></v-spacer>
-              <p>{{ $formatNumberWithCommas(Math.floor(spousalExcess)) }}</p>
+              <p>{{ $formatNumberWithCommas(customRound(spousalExcess)) }}</p>
             </div>
             <hr>
             <div class="d-flex">
               <h3><strong>Total Benefit</strong></h3><v-spacer></v-spacer>
-              <p><strong>{{ $formatNumberWithCommas(Math.floor(lowerEarnerPayment + spousalExcess)) }}</strong></p>
+              <p><strong>{{ $formatNumberWithCommas(customRound(lowerEarnerPayment + spousalExcess)) }}</strong></p>
             </div>
 
           </div>
@@ -235,6 +235,17 @@ export default {
       const newDate = new Date(date);
       newDate.setFullYear(newDate.getFullYear() + yearsToAdd);
       return newDate;
+    },
+    customRound(value) {
+      const decimalPart = value - Math.floor(value);
+
+      if (decimalPart >= 0.5) {
+        // If decimal part is greater than or equal to 0.5, use Math.ceil()
+        return Math.ceil(value);
+      } else {
+        // If decimal part is less than 0.5, use Math.floor()
+        return Math.floor(value);
+      }
     }
   },
 };

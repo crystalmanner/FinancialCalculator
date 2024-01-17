@@ -1,18 +1,21 @@
 <template>
   <v-container class="fill-height">
     <v-responsive class="fill-height">
-      <h1>Fee Calculator</h1>
+      <h1>Portfolio Fee Calculator</h1>
       <hr>
       <v-row class="pa-2 mt-4">
-        <v-col cols="12" lg="4" md="4" sm="12">
+        <v-col cols="12" lg="6" md="6" sm="12">
           <v-form v-model="validForm">
             <v-text-field v-model="formattedAccountValue" :rules="[$textGreaterThanNegativeRule, textSmallerThan12000000]"
               label="Account(s) Value" type="text" prefix="$"
               hint="The total value of all your accounts which will be charged a fee" @blur="formatAccountValue"
               @input="stripAccountValueFormatting" dense></v-text-field>
-            <v-text-field v-model.number="averageExpectedGrowthRate"
+            <v-text-field v-model.number="averageAnnualReturn"
               :rules="[$numberGreaterThanNegativeRule, numberSmallerThan12]" label="Average Annual Return" suffix="%"
               hint="How much do you expect to earn on an average annual basis?" dense></v-text-field>
+            <v-text-field v-model.number="periodLength" :rules="[...periodLengthRules, numberSmallerThan50]"
+              label="Period Length" suffix="year(s)" hint="How many years would you like to use for this calculation?"
+              dense></v-text-field>
             <v-text-field v-model="formattedAnnualDistribution" :rules="[$textGreaterThanNegativeRule]"
               label="Annual Distribution" prefix="$" type="text"
               hint="How much would you like to take out of your accounts for living expenses?"
@@ -22,24 +25,55 @@
               suffix="%"
               hint="How much would you like to increase your annual living expense distributions to offset inflation?"
               dense></v-text-field>
-            <v-text-field v-model.number="advisoryFeeRate" :rules="[$numberGreaterThanNegativeRule]"
-              label="% Advisory Fee" suffix="%" hint="How much are you being charged as a percentage for an advisory fee?"
-              dense></v-text-field>
-            <v-text-field v-model.number="annualIncreaseAdvisoryFeeRate" :rules="[$numberGreaterThanNegativeRule]"
-              label="Annual Increase to % Advisory Fee" suffix="%" hint="Will your advisor increase this fee?"
-              dense></v-text-field>
-            <v-text-field v-model="formattedFlatFee" :rules="[$textGreaterThanNegativeRule]" label="Flat Fee" prefix="$"
-              hint="What is the proposed dollar amount of the flat fee?" type="text" @blur="formatFlatFee"
-              @input="stripFlatFeeFormatting" dense></v-text-field>
-            <v-text-field v-model.number="annualIncreaseFlatFeeRate" :rules="[$numberGreaterThanNegativeRule]"
-              label="Annual Increase to Flat Fee" suffix="%" hint="Will the flat fee increase annually?"
-              dense></v-text-field>
-            <v-text-field v-model.number="periodLength" :rules="[...periodLengthRules, numberSmallerThan50]"
-              label="Period Length" suffix="year(s)" hint="How many years would you like to use for this calculation?"
-              dense></v-text-field>
+
+            <v-row>
+              <v-col cols="12" lg="6" md="6" sm="12">
+                <h4>Current Portfolio</h4>
+                <v-text-field v-model.number="currentAveragePortfolioExpenseRate"
+                  :rules="[$numberGreaterThanNegativeRule]" label="Average Portfolio Expense" suffix="%"
+                  hint="Will your advisor increase this fee?" dense></v-text-field>
+
+
+                <v-radio-group v-model="currentFeeOption">
+                  <v-radio label="Advisory Fee" value="advisoryFee"></v-radio>
+                  <v-radio label="Flat Fee" value="flatFee"></v-radio>
+                </v-radio-group>
+                <v-text-field v-if="currentFeeOption === 'advisoryFee'" v-model.number="currentAdvisoryFeeRate"
+                  :rules="[$numberGreaterThanNegativeRule]" label="% Advisory Fee" suffix="%"
+                  hint="How much are you being charged as a percentage for an advisory fee?" dense></v-text-field>
+                <v-text-field v-if="currentFeeOption === 'flatFee'" v-model="formattedCurrentFlatFee"
+                  :rules="[$textGreaterThanNegativeRule]" label="Flat Fee" prefix="$"
+                  hint="What is the proposed dollar amount of the flat fee?" type="text" @blur="formatCurrentFlatFee"
+                  @input="stripCurrentFlatFeeFormatting" dense></v-text-field>
+                <v-text-field v-model.number="currentAnnualIncreaseFeeRate" :rules="[$numberGreaterThanNegativeRule]"
+                  label="Annual Increase to Fee" suffix="%" hint="Will the flat fee increase annually?"
+                  dense></v-text-field>
+              </v-col>
+              <v-col cols="12" lg="6" md="6" sm="12">
+                <h4>Proposed Portfolio</h4>
+                <v-text-field v-model.number="proposedAveragePortfolioExpenseRate"
+                  :rules="[$numberGreaterThanNegativeRule]" label="Average Portfolio Expense" suffix="%"
+                  hint="Will your advisor increase this fee?" dense></v-text-field>
+                <v-radio-group v-model="proposedFeeOption">
+                  <v-radio label="Advisory Fee" value="advisoryFee"></v-radio>
+                  <v-radio label="Flat Fee" value="flatFee"></v-radio>
+                </v-radio-group>
+                <v-text-field v-if="proposedFeeOption === 'advisoryFee'" v-model.number="proposedAdvisoryFeeRate"
+                  :rules="[$numberGreaterThanNegativeRule]" label="% Advisory Fee" suffix="%"
+                  hint="How much are you being charged as a percentage for an advisory fee?" dense></v-text-field>
+                <v-text-field v-if="proposedFeeOption === 'flatFee'" v-model="formattedProposedFlatFee"
+                  :rules="[$textGreaterThanNegativeRule]" label="Flat Fee" prefix="$"
+                  hint="What is the proposed dollar amount of the flat fee?" type="text" @blur="formatProposedFlatFee"
+                  @input="stripProposedFlatFeeFormatting" dense></v-text-field>
+                <v-text-field v-model.number="proposedAnnualIncreaseFeeRate" :rules="[$numberGreaterThanNegativeRule]"
+                  label="Annual Increase to Fee" suffix="%" hint="Will the flat fee increase annually?"
+                  dense></v-text-field>
+              </v-col>
+            </v-row>
+
           </v-form>
         </v-col>
-        <v-col cols="12" lg="8" md="8" sm="12">
+        <v-col cols="12" lg="6" md="6" sm="12">
           <div v-if="validForm">
             <h2>FACE VALUE&nbsp;
               <v-tooltip location="bottom">
@@ -50,17 +84,51 @@
               </v-tooltip>
             </h2>
             <div class="d-flex">
-              <h3>% Fee</h3><v-spacer></v-spacer>
-              <p>{{ $formatNumberWithCommas(totalPercentFee) }}</p>
+              <div class="width-50">
+                <h4>Current Portfolio</h4>
+                <ul class="ml-5">
+                  <li>Advisory Expense</li>
+                  <li>Investment Expense</li>
+                </ul>
+              </div>
+              <div class="width-50">
+                <h4>
+                  {{ $formatNumberWithCommas(customRound(currentTotalAdvisoryExpense + currentTotalInvestmentExpense)) }}
+                </h4>
+                <ul class="ml-5">
+                  <li>{{ $formatNumberWithCommas(customRound(currentTotalAdvisoryExpense)) }}</li>
+                  <li>{{ $formatNumberWithCommas(customRound(currentTotalInvestmentExpense)) }}</li>
+                </ul>
+              </div>
             </div>
             <div class="d-flex">
-              <h3>Flat Fee</h3><v-spacer></v-spacer>
-              <p>{{ $formatNumberWithCommas(totalFlatFee) }}</p>
+              <div class="width-50">
+                <h4>Proposed Portfolio</h4>
+                <ul class="ml-5">
+                  <li>Advisory Expense</li>
+                  <li>Investment Expense</li>
+                </ul>
+              </div>
+              <div class="width-50">
+                <h4>
+                  {{ $formatNumberWithCommas(customRound(proposedTotalAdvisoryExpense + proposedTotalInvestmentExpense)) }}
+                </h4>
+                <ul class="ml-5">
+                  <li>{{ $formatNumberWithCommas(customRound(proposedTotalAdvisoryExpense)) }}</li>
+                  <li>{{ $formatNumberWithCommas(customRound(proposedTotalInvestmentExpense)) }}</li>
+                </ul>
+              </div>
             </div>
             <hr>
             <div class="d-flex">
-              <h3>Difference</h3><v-spacer></v-spacer>
-              <p>{{ $formatNumberWithCommas(Math.abs(totalPercentFee - totalFlatFee)) }}</p>
+              <div class="width-50">
+                <h4>Difference</h4>
+              </div>
+              <div class="width-50">
+                <h4>
+                  {{ $formatNumberWithCommas(customRound(Math.abs(currentTotalAdvisoryExpense + currentTotalInvestmentExpense - proposedTotalAdvisoryExpense - proposedTotalInvestmentExpense))) }}
+                </h4>
+              </div>
             </div>
             <h2 class="mt-2">REAL VALUE&nbsp;
               <v-tooltip location="bottom">
@@ -72,18 +140,39 @@
               </v-tooltip>
             </h2>
             <div class="d-flex">
-              <h3>% Fee</h3><v-spacer></v-spacer>
-              <p>{{ $formatNumberWithCommas(percentAccountValue) }}</p>
+              <div class="width-50">
+                <h4>Current Portfolio</h4>
+              </div>
+              <div class="width-50">
+                <h4> {{ $formatNumberWithCommas(customRound(currentRealValue)) }}</h4>
+              </div>
             </div>
             <div class="d-flex">
-              <h3>Flat Fee</h3><v-spacer></v-spacer>
-              <p>{{ $formatNumberWithCommas(flatFeeAccountValue) }}</p>
+              <div class="width-50">
+                <h4>Proposed Portfolio</h4>
+              </div>
+              <div class="width-50">
+                <h4> {{ $formatNumberWithCommas(customRound(proposedRealValue)) }}</h4>
+              </div>
             </div>
             <hr>
             <div class="d-flex">
-              <h3>Difference</h3><v-spacer></v-spacer>
-              <p>{{ $formatNumberWithCommas(Math.abs(percentAccountValue - flatFeeAccountValue)) }}</p>
+              <div class="width-50">
+                <h4>Difference</h4>
+              </div>
+              <div class="width-50">
+                <h4>
+                  {{ $formatNumberWithCommas(customRound(Math.abs(currentRealValue - proposedRealValue))) }}
+                </h4>
+              </div>
             </div>
+          </div>
+          <div v-else class="mt-2 text-center">
+            <h3 class="text-red-accent-2">Please input valid values.</h3>
+          </div>
+        </v-col>
+        <v-col cols="12" lg="12" md="12" sm="12">
+          <div v-if="validForm">
             <v-tabs v-model="tab" color="primary" align-tabs="left">
               <v-tab :value="1">Chart</v-tab>
               <v-tab :value="2">Table</v-tab>
@@ -95,13 +184,10 @@
                 </div>
               </v-window-item>
               <v-window-item :value="2">
-                <v-data-table :headers="headers" :items="tableData" :items-per-page="-1"
+                <v-data-table :headers="headers" item-key="year" :items="tableData" :items-per-page="-1"
                   :items-per-page-options="pageOptions"></v-data-table>
               </v-window-item>
             </v-window>
-          </div>
-          <div v-else class="mt-2 text-center">
-            <h3 class="text-red-accent-2">Please input valid values.</h3>
           </div>
         </v-col>
         <v-col cols="12" lg="12" md="12" sm="12">
@@ -153,16 +239,37 @@ export default {
       validForm: true,
       accountValue: 2000000,
       formattedAccountValue: '2,000,000',
-      averageExpectedGrowthRate: 7,
+      averageAnnualReturn: 7,
+      periodLength: 25,
       annualDistribution: 80000,
       formattedAnnualDistribution: '80,000',
       annualIncreaseDistributionRate: 2,
-      advisoryFeeRate: 1,
-      annualIncreaseAdvisoryFeeRate: 0,
-      flatFee: 10000,
-      formattedFlatFee: '10,000',
-      annualIncreaseFlatFeeRate: 3,
-      periodLength: 25,
+
+      currentAveragePortfolioExpenseRate: 0.7,
+      currentAdvisoryFeeRate: 1,
+      currentFlatFee: 10000,
+      formattedCurrentFlatFee: '10,000',
+      currentAnnualIncreaseFeeRate: 0,
+      currentFeeOption: 'advisoryFee',
+
+      currentTotalAdvisoryExpense: 0,
+      currentTotalInvestmentExpense: 0,
+      proposedTotalAdvisoryExpense: 0,
+      proposedTotalInvestmentExpense: 0,
+      currentRealValue: 0,
+      proposedRealValue: 0,
+
+      proposedAveragePortfolioExpenseRate: 0.1,
+      proposedAdvisoryFeeRate: 1,
+      proposedFlatFee: 10000,
+      formattedProposedFlatFee: '10,000',
+      proposedAnnualIncreaseFeeRate: 3,
+      proposedFeeOption: 'flatFee',
+
+      proposedTotalPercentFee: 0,
+      proposedTotalFlatFee: 0,
+      proposedFlatFeeAccountValue: 0,
+      proposedPercentAccountValue: 0,
       tab: null,
       tableData: [],
       pageOptions: [
@@ -171,10 +278,7 @@ export default {
         { value: 25, title: '25' },
         { value: -1, title: '$vuetify.dataFooter.itemsPerPageAll' }
       ],
-      totalPercentFee: 0,
-      totalFlatFee: 0,
-      flatFeeAccountValue: 0,
-      percentAccountValue: 0,
+
       chartOptions: {
         responsive: true,
         lineTension: 1,
@@ -201,17 +305,17 @@ export default {
         labels: [],
         datasets: [
           {
-            label: "% Fee Account Value",
+            label: "Current Portfolio",
             data: [],
-            backgroundColor: "rgba(0,112,192,.8)",
+            backgroundColor: "rgba(0,112,192,.6)",
             borderColor: "#4897FF",
             borderWidth: 1,
             fill: true,
           },
           {
-            label: "Flat Fee Account Value",
+            label: "Proposed Portfolio",
             data: [],
-            backgroundColor: "rgba(0,176,80,.8)",
+            backgroundColor: "rgba(0,176,80,.6)",
             borderColor: "#88DD9B",
             borderWidth: 1,
             fill: true,
@@ -227,7 +331,7 @@ export default {
     accountValue() {
       this.calculate();
     },
-    averageExpectedGrowthRate() {
+    averageAnnualReturn() {
       this.calculate();
     },
     annualDistribution() {
@@ -236,34 +340,90 @@ export default {
     annualIncreaseDistributionRate() {
       this.calculate();
     },
-    advisoryFeeRate() {
-      this.calculate();
-    },
-    annualIncreaseAdvisoryFeeRate() {
-      this.calculate();
-    },
-    flatFee() {
-      this.calculate();
-    },
-    annualIncreaseFlatFeeRate() {
-      this.calculate();
-    },
     periodLength() {
       this.calculate();
-    }
+    },
+    currentFeeOption() {
+      this.calculate();
+    },
+    proposedFeeOption() {
+      this.calculate();
+    },
+    currentAdvisoryFeeRate() {
+      this.calculate();
+    },
+    currentAveragePortfolioExpenseRate() {
+      this.calculate();
+    },
+    currentFlatFee() {
+      this.calculate();
+    },
+    currentAnnualIncreaseFeeRate() {
+      this.calculate();
+    },
+
+    proposedAdvisoryFeeRate() {
+      this.calculate();
+    },
+    proposedAveragePortfolioExpenseRate() {
+      this.calculate();
+    },
+    proposedFlatFee() {
+      this.calculate();
+    },
+    proposedAnnualIncreaseFeeRate() {
+      this.calculate();
+    },
   },
   computed: {
+    // headers() {
+    //   return [
+    //     {
+    //       align: 'start',
+    //       title: '',
+    //       key: 'year',
+    //     },
+    //     {
+    //       title: 'Current Portfolio',
+    //       align: 'center',
+    //       children: [
+    //         { title: 'Account Value', key: 'currentAccountValue' },
+    //         { title: 'Distribution', key: 'currentDistribution' },
+    //         { title: 'Advisory Expense', key: 'currentAdvisoryExpense' },
+    //         { title: 'Investment Expense', key: 'currentInvestmentExpense' },
+    //         { title: 'Total Expense', key: 'currentTotalExpense' },
+    //       ]
+    //     },
+    //     {
+    //       title: 'Proposed Portfolio',
+    //       align: 'center',
+    //       children: [
+    //         { title: 'Account Value', key: 'proposedAccountValue' },
+    //         { title: 'Distribution', key: 'proposedDistribution' },
+    //         { title: 'Advisory Expense', key: 'proposedAdvisoryExpense' },
+    //         { title: 'Investment Expense', key: 'proposedInvestmentExpense' },
+    //         { title: 'Total Expense', key: 'proposedTotalExpense' },
+    //       ]
+    //     }
+    //   ]
+    // },
     headers() {
       return [
         {
           align: 'start',
-          key: 'year',
           title: '',
-          width: '25%',
+          key: 'year',
         },
-        { key: 'flatFeeAccountValue', title: 'Flat Fee - Account Value', width: '25%' },
-        { key: 'percentAccountValue', title: this.advisoryFeeRate + '% Fee - Account Value', width: '25%' },
-        { key: 'difference', title: 'Difference', width: '25%' },
+        { title: 'Account Value', key: 'currentAccountValue' },
+        { title: 'Distribution', key: 'currentDistribution' },
+        { title: 'Advisory Expense', key: 'currentAdvisoryExpense' },
+        { title: 'Investment Expense', key: 'currentInvestmentExpense' },
+        { title: 'Total Expense', key: 'currentTotalExpense' },
+        { title: 'Account Value', key: 'proposedAccountValue' },
+        { title: 'Distribution', key: 'proposedDistribution' },
+        { title: 'Advisory Expense', key: 'proposedAdvisoryExpense' },
+        { title: 'Investment Expense', key: 'proposedInvestmentExpense' },
+        { title: 'Total Expense', key: 'proposedTotalExpense' },
       ]
     },
   },
@@ -295,16 +455,27 @@ export default {
       // Update the displayed value to keep the cursor in the correct position
       this.formattedAnnualDistribution = digits;
     },
-    formatFlatFee() {
+    formatCurrentFlatFee() {
       // When the user leaves the field, format the number with commas
-      this.formattedFlatFee = new Intl.NumberFormat().format(this.flatFee);
+      this.formattedCurrentFlatFee = new Intl.NumberFormat().format(this.currentFlatFee);
     },
-    stripFlatFeeFormatting(event) {
+    stripCurrentFlatFeeFormatting(event) {
       // When the user inputs text, strip non-numeric characters and save the raw number
       const digits = event.target.value.replace(/[^\d]/g, '');
-      this.flatFee = digits;
+      this.currentFlatFee = digits;
       // Update the displayed value to keep the cursor in the correct position
-      this.formattedFlatFee = digits;
+      this.formattedCurrentFlatFee = digits;
+    },
+    formatProposedFlatFee() {
+      // When the user leaves the field, format the number with commas
+      this.formattedProposedFlatFee = new Intl.NumberFormat().format(this.proposedFlatFee);
+    },
+    stripProposedFlatFeeFormatting(event) {
+      // When the user inputs text, strip non-numeric characters and save the raw number
+      const digits = event.target.value.replace(/[^\d]/g, '');
+      this.proposedFlatFee = digits;
+      // Update the displayed value to keep the cursor in the correct position
+      this.formattedProposedFlatFee = digits;
     },
     calculate() {
       this.tableData = [];
@@ -314,52 +485,97 @@ export default {
         labels: [],
         datasets: [
           {
-            label: "% Fee Account Value",
+            label: "Current Portfolio",
             data: [],
-            backgroundColor: "rgba(0,112,192,.8)",
+            backgroundColor: "rgba(0,112,192,.6)",
             borderColor: "#4897FF",
             borderWidth: 1,
             fill: true,
           },
           {
-            label: "Flat Fee Account Value",
+            label: "Proposed Portfolio",
             data: [],
-            backgroundColor: "rgba(0,176,80,.8)",
+            backgroundColor: "rgba(0,176,80,.6)",
             borderColor: "#88DD9B",
             borderWidth: 1,
             fill: true,
           },
         ],
       };
-      let distribution = parseFloat(this.annualDistribution);
-      let percentFee = this.accountValue * this.advisoryFeeRate / 100;
-      let flatFee = parseFloat(this.flatFee);
-      let percentAccountValue = parseFloat(this.accountValue);
-      let flatFeeAccountValue = parseFloat(this.accountValue);
-      let advisoryFeeRate = this.advisoryFeeRate;
-      this.totalPercentFee = 0;
-      this.totalFlatFee = 0;
+      let currentAccountValue = parseFloat(this.accountValue);
+      let currentDistribution = parseFloat(this.annualDistribution);
+      let currentAdvisoryExpense;
+      if (this.currentFeeOption === 'advisoryFee') {
+        currentAdvisoryExpense = currentAccountValue * this.currentAdvisoryFeeRate / 100;
+      } else {
+        currentAdvisoryExpense = parseFloat(this.currentFlatFee);
+      }
+      let currentInvestmentExpense = currentAccountValue * this.currentAveragePortfolioExpenseRate / 100;
+      let currentTotalExpense = currentAdvisoryExpense + currentInvestmentExpense;
+
+      let proposedAccountValue = parseFloat(this.accountValue);
+      let proposedDistribution = parseFloat(this.annualDistribution);
+      let proposedAdvisoryExpense;
+      if (this.proposedFeeOption === 'advisoryFee') {
+        proposedAdvisoryExpense = proposedAccountValue * this.proposedAdvisoryFeeRate / 100;
+      } else {
+        proposedAdvisoryExpense = parseFloat(this.proposedFlatFee);
+      }
+      let proposedInvestmentExpense = proposedAccountValue * this.proposedAveragePortfolioExpenseRate / 100;
+      let proposedTotalExpense = proposedAdvisoryExpense + proposedInvestmentExpense;
+
+      this.currentTotalAdvisoryExpense = 0;
+      this.currentTotalInvestmentExpense = 0;
+      this.proposedTotalAdvisoryExpense = 0;
+      this.proposedTotalInvestmentExpense = 0;
       while (i < this.periodLength) {
         i++;
-        flatFeeAccountValue = flatFeeAccountValue * (100 + this.averageExpectedGrowthRate) / 100 - (distribution + flatFee);
-        percentAccountValue = percentAccountValue * (100 + this.averageExpectedGrowthRate) / 100 - (distribution + percentFee);
-        distribution = distribution * (100 + this.annualIncreaseDistributionRate) / 100;
-        percentFee = percentAccountValue * advisoryFeeRate / 100;
-        flatFee = flatFee * (100 + this.annualIncreaseFlatFeeRate) / 100;
-        advisoryFeeRate = advisoryFeeRate * (100 + this.annualIncreaseAdvisoryFeeRate) / 100;
+        currentAccountValue = currentAccountValue * (100 + this.averageAnnualReturn) / 100 - currentDistribution - currentAdvisoryExpense - currentInvestmentExpense;
+        currentDistribution = currentDistribution * (100 + this.annualIncreaseDistributionRate) / 100;
+        if (this.currentFeeOption === 'advisoryFee') {
+          currentAdvisoryExpense = currentAccountValue * this.currentAdvisoryFeeRate / 100;
+          currentAdvisoryExpense = currentAdvisoryExpense * (100 + this.currentAnnualIncreaseFeeRate) / 100;
+        } else {
+          currentAdvisoryExpense = currentAdvisoryExpense * (100 + this.currentAnnualIncreaseFeeRate) / 100;
+
+        }
+        currentInvestmentExpense = currentAccountValue * this.currentAveragePortfolioExpenseRate / 100;
+        currentTotalExpense = currentAdvisoryExpense + currentInvestmentExpense;
+
+        proposedAccountValue = proposedAccountValue * (100 + this.averageAnnualReturn) / 100 - proposedDistribution - proposedAdvisoryExpense - proposedInvestmentExpense;
+        proposedDistribution = proposedDistribution * (100 + this.annualIncreaseDistributionRate) / 100;
+        if (this.proposedFeeOption === 'advisoryFee') {
+          proposedAdvisoryExpense = proposedAccountValue * this.proposedAdvisoryFeeRate /
+            100;
+          proposedAdvisoryExpense = proposedAdvisoryExpense * (100 + this.proposedAnnualIncreaseFeeRate) / 100;
+        } else {
+          proposedAdvisoryExpense = proposedAdvisoryExpense * (100 + this.proposedAnnualIncreaseFeeRate) / 100;
+        }
+        proposedInvestmentExpense = proposedAccountValue * this.proposedAveragePortfolioExpenseRate / 100;
+        proposedTotalExpense = proposedAdvisoryExpense + proposedInvestmentExpense;
+
+        this.currentTotalAdvisoryExpense += currentAdvisoryExpense;
+        this.currentTotalInvestmentExpense += currentInvestmentExpense;
+        this.proposedTotalAdvisoryExpense += proposedAdvisoryExpense;
+        this.proposedTotalInvestmentExpense += proposedInvestmentExpense;
+        this.currentRealValue = currentAccountValue;
+        this.proposedRealValue = proposedAccountValue;
         this.tableData.push({
           'year': 'Year ' + i,
-          'flatFeeAccountValue': this.$formatNumberWithCommas(flatFeeAccountValue),
-          'percentAccountValue': this.$formatNumberWithCommas(percentAccountValue),
-          'difference': this.$formatNumberWithCommas(flatFeeAccountValue - percentAccountValue),
+          'currentAccountValue': this.$formatNumberWithCommas(this.customRound(currentAccountValue)),
+          'currentDistribution': this.$formatNumberWithCommas(this.customRound(currentDistribution)),
+          'currentAdvisoryExpense': this.$formatNumberWithCommas(this.customRound(currentAdvisoryExpense)),
+          'currentInvestmentExpense': this.$formatNumberWithCommas(this.customRound(currentInvestmentExpense)),
+          'currentTotalExpense': this.$formatNumberWithCommas(this.customRound(currentTotalExpense)),
+          'proposedAccountValue': this.$formatNumberWithCommas(this.customRound(proposedAccountValue)),
+          'proposedDistribution': this.$formatNumberWithCommas(this.customRound(proposedDistribution)),
+          'proposedAdvisoryExpense': this.$formatNumberWithCommas(this.customRound(proposedAdvisoryExpense)),
+          'proposedInvestmentExpense': this.$formatNumberWithCommas(this.customRound(proposedInvestmentExpense)),
+          'proposedTotalExpense': this.$formatNumberWithCommas(this.customRound(proposedTotalExpense)),
         });
         chartData.labels.push('Year ' + i);
-        chartData.datasets[0].data.push(percentAccountValue.toFixed(2));
-        chartData.datasets[1].data.push(flatFeeAccountValue.toFixed(2));
-        this.totalPercentFee += percentFee;
-        this.totalFlatFee += flatFee;
-        this.flatFeeAccountValue = flatFeeAccountValue;
-        this.percentAccountValue = percentAccountValue;
+        chartData.datasets[0].data.push(currentTotalExpense.toFixed(2));
+        chartData.datasets[1].data.push(proposedTotalExpense.toFixed(2));
       }
 
       this.chartData = chartData;
@@ -392,6 +608,16 @@ export default {
       }
       return true; // Validation passes
     },
+    customRound(value) {
+      const decimalPart = value - Math.floor(value);
+      if (decimalPart >= 0.5) {
+        // If decimal part is greater than or equal to 0.5, use Math.ceil()
+        return Math.ceil(value);
+      } else {
+        // If decimal part is less than 0.5, use Math.floor()
+        return Math.floor(value);
+      }
+    }
   },
 };
 </script>
@@ -425,5 +651,9 @@ export default {
 
 .cursor-pointer {
   cursor: pointer;
+}
+
+.width-50 {
+  width: 50%;
 }
 </style>
