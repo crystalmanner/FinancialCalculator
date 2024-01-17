@@ -378,13 +378,17 @@ export default {
       return [
         {
           title: '',
-          align: 'start',
-          value: 'year',
+          children: [
+            {
+              title: 'Year',
+              align: 'start',
+              value: 'year',
+            }
+          ]
         },
         {
           title: 'Current Portfolio',
           align: 'center',
-          value: 'current',
           children: [
             { title: 'Account Value', value: 'currentAccountValue' },
             { title: 'Distribution', value: 'currentDistribution' },
@@ -396,7 +400,6 @@ export default {
         {
           title: 'Proposed Portfolio',
           align: 'center',
-          value: 'proposed',
           children: [
             { title: 'Account Value', value: 'proposedAccountValue' },
             { title: 'Distribution', value: 'proposedDistribution' },
@@ -542,7 +545,7 @@ export default {
         this.currentRealValue = currentAccountValue;
         this.proposedRealValue = proposedAccountValue;
         this.tableData.push({
-          'year': 'Year ' + i,
+          'year': i,
           'currentAccountValue': this.$formatNumberWithCommas(this.customRound(currentAccountValue)),
           'currentDistribution': this.$formatNumberWithCommas(this.customRound(currentDistribution)),
           'currentAdvisoryExpense': this.$formatNumberWithCommas(this.customRound(currentAdvisoryExpense)),
@@ -650,11 +653,11 @@ export default {
   background-color: #88DD9B;
 }
 
-.portfolio-table table thead tr:nth-child(2) th:nth-child(n+1):nth-child(-n+5) {
+.portfolio-table table thead tr:nth-child(2) th:nth-child(n+2):nth-child(-n+6) {
   background-color: #CEE1F2;
 }
 
-.portfolio-table table thead tr:nth-child(2) th:nth-child(n+6):nth-child(-n+10) {
+.portfolio-table table thead tr:nth-child(2) th:nth-child(n+7):nth-child(-n+11) {
   background-color: #D6EBD5;
 }
 
