@@ -192,13 +192,10 @@
         </v-col>
         <v-col cols="12" lg="12" md="12" sm="12">
           <p class="text-subtitle-2 text-center">Disclaimer: The calculation provided by this fee calculator is intended
-            for
-            illustrative purposes only and
-            does not include the impact of taxes, investment expenses, required minimum distributions, or other potential
-            financial factors. It is not intended to provide specific financial, investment, tax, legal, or accounting
-            advice. For personalized advice, please consult with a qualified professional. The results are based on the
-            information provided and certain assumptions about the future, which may not be accurate. We do not guarantee
-            the accuracy or applicability of this calculation to your individual circumstances.</p>
+            for illustrative purposes only. It is not intended to provide specific financial, investment, tax, legal, or
+            accounting advice. For personalized advice, please consult with a qualified professional. The results are
+            based on the information provided and certain assumptions about the future, which may not be accurate. We do
+            not guarantee the accuracy or applicability of this calculation to your individual circumstances.</p>
         </v-col>
       </v-row>
     </v-responsive>
@@ -386,6 +383,7 @@ export default {
     //     {
     //       title: 'Current Portfolio',
     //       align: 'center',
+    //       key: 'current',
     //       children: [
     //         { title: 'Account Value', key: 'currentAccountValue' },
     //         { title: 'Distribution', key: 'currentDistribution' },
@@ -397,6 +395,7 @@ export default {
     //     {
     //       title: 'Proposed Portfolio',
     //       align: 'center',
+    //       key: 'proposed',
     //       children: [
     //         { title: 'Account Value', key: 'proposedAccountValue' },
     //         { title: 'Distribution', key: 'proposedDistribution' },
@@ -574,8 +573,8 @@ export default {
           'proposedTotalExpense': this.$formatNumberWithCommas(this.customRound(proposedTotalExpense)),
         });
         chartData.labels.push('Year ' + i);
-        chartData.datasets[0].data.push(currentTotalExpense.toFixed(2));
-        chartData.datasets[1].data.push(proposedTotalExpense.toFixed(2));
+        chartData.datasets[0].data.push(currentAccountValue.toFixed(2));
+        chartData.datasets[1].data.push(proposedAccountValue.toFixed(2));
       }
 
       this.chartData = chartData;
