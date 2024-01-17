@@ -88,7 +88,7 @@
                 <h4>Current Portfolio</h4>
                 <ul class="ml-5">
                   <li>Advisory Expense</li>
-                  <li>Investment Expense</li>
+                  <li>Investment Expense ({{ this.currentAveragePortfolioExpenseRate }}%)</li>
                 </ul>
               </div>
               <div class="width-50">
@@ -106,7 +106,7 @@
                 <h4>Proposed Portfolio</h4>
                 <ul class="ml-5">
                   <li>Advisory Expense</li>
-                  <li>Investment Expense</li>
+                  <li>Investment Expense ({{ this.proposedAveragePortfolioExpenseRate }}%)</li>
                 </ul>
               </div>
               <div class="width-50">
@@ -185,7 +185,8 @@
               </v-window-item>
               <v-window-item :value="2">
                 <v-data-table :headers="headers" :items="tableData" :items-per-page="-1"
-                  :items-per-page-options="pageOptions"></v-data-table>
+                  :items-per-page-options="pageOptions" class="portfolio-table mt-4">
+                </v-data-table>
               </v-window-item>
             </v-window>
           </div>
@@ -388,7 +389,7 @@ export default {
             { title: 'Account Value', value: 'currentAccountValue' },
             { title: 'Distribution', value: 'currentDistribution' },
             { title: 'Advisory Expense', value: 'currentAdvisoryExpense' },
-            { title: 'Investment Expense', value: 'currentInvestmentExpense' },
+            { title: 'Investment Expense (' + this.currentAveragePortfolioExpenseRate + '%)', value: 'currentInvestmentExpense' },
             { title: 'Total Expense', value: 'currentTotalExpense' },
           ]
         },
@@ -400,31 +401,12 @@ export default {
             { title: 'Account Value', value: 'proposedAccountValue' },
             { title: 'Distribution', value: 'proposedDistribution' },
             { title: 'Advisory Expense', value: 'proposedAdvisoryExpense' },
-            { title: 'Investment Expense', value: 'proposedInvestmentExpense' },
+            { title: 'Investment Expense (' + this.proposedAveragePortfolioExpenseRate + '%)', value: 'proposedInvestmentExpense' },
             { title: 'Total Expense', value: 'proposedTotalExpense' },
           ]
         }
       ]
     },
-    // headers() {
-    //   return [
-    //     {
-    //       align: 'start',
-    //       title: '',
-    //       key: 'year',
-    //     },
-    //     { title: 'Account Value', key: 'currentAccountValue' },
-    //     { title: 'Distribution', key: 'currentDistribution' },
-    //     { title: 'Advisory Expense', key: 'currentAdvisoryExpense' },
-    //     { title: 'Investment Expense', key: 'currentInvestmentExpense' },
-    //     { title: 'Total Expense', key: 'currentTotalExpense' },
-    //     { title: 'Account Value', key: 'proposedAccountValue' },
-    //     { title: 'Distribution', key: 'proposedDistribution' },
-    //     { title: 'Advisory Expense', key: 'proposedAdvisoryExpense' },
-    //     { title: 'Investment Expense', key: 'proposedInvestmentExpense' },
-    //     { title: 'Total Expense', key: 'proposedTotalExpense' },
-    //   ]
-    // },
   },
   created() {
     this.$nextTick(() => {
@@ -654,5 +636,33 @@ export default {
 
 .width-50 {
   width: 50%;
+}
+
+.current-header-style {
+  background-color: #4897FF;
+}
+
+.portfolio-table table thead tr:nth-child(1) th:nth-child(2) {
+  background-color: #4897FF;
+}
+
+.portfolio-table table thead tr:nth-child(1) th:nth-child(3) {
+  background-color: #88DD9B;
+}
+
+.portfolio-table table thead tr:nth-child(2) th:nth-child(n+1):nth-child(-n+5) {
+  background-color: #CEE1F2;
+}
+
+.portfolio-table table thead tr:nth-child(2) th:nth-child(n+6):nth-child(-n+10) {
+  background-color: #D6EBD5;
+}
+
+.portfolio-table table tbody tr td:nth-child(n+2):nth-child(-n+6) {
+  background-color: #CEE1F2;
+}
+
+.portfolio-table table tbody tr td:nth-child(n+7):nth-child(-n+11) {
+  background-color: #D6EBD5;
 }
 </style>
