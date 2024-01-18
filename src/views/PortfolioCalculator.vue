@@ -1,7 +1,7 @@
 <template>
   <v-container class="fill-height">
     <v-responsive class="fill-height">
-      <h1>Portfolio Fee Calculator</h1>
+      <h1>Total Fee Comparison Calculator</h1>
       <hr>
       <v-row class="pa-2 mt-4">
         <v-col cols="12" lg="6" md="6" sm="12">
