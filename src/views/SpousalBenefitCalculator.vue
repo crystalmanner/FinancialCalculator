@@ -219,12 +219,12 @@ export default {
         fullRetireMonths = 66 * 12;
       }
       let retiredMonths = this.getMonthOffset(new Date(this.lowerEarnerDOB), new Date(this.lowerEarnerFileDate));
-      this.lowerEarnerPaymentTitle = 'Benefit from Lower Earner Work at ' + this.getYearsMonth(retiredMonths);
+      this.lowerEarnerPaymentTitle = 'Benefit from Lower Earner Work at ' + this.getYearsMonth(retiredMonths) + "*";
       this.lowerEarnerPayment = this.getLowerEarnerPayment(fullRetireMonths, retiredMonths);
 
       retiredMonths = this.getMonthOffset(new Date(this.lowerEarnerDOB), this.getMaxDate(new Date(this.lowerEarnerFileDate), new Date(this.higherEarnerFileDate)));
       let lowerEarnerPayment = this.getLowerEarnerPayment(fullRetireMonths, retiredMonths);
-      this.spousalExcessTitle = 'Additional Benefit from Spousal Payment at ' + this.getYearsMonth(retiredMonths);
+      this.spousalExcessTitle = 'Additional Benefit from Spousal Payment at ' + this.getYearsMonth(retiredMonths) + "*";
       if (fullRetireMonths > retiredMonths) {
         if ((fullRetireMonths - retiredMonths) > 36) {
           this.spousalExcess = spousalPayment * (100 - 36 * 25 / 36 - (fullRetireMonths - retiredMonths - 36) * 5 / 12) / 100;
