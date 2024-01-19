@@ -49,7 +49,9 @@
               <h3><strong>Total Benefit</strong></h3><v-spacer></v-spacer>
               <p><strong>{{ $formatNumberWithCommas(customRound(lowerEarnerPayment + spousalExcess)) }}</strong></p>
             </div>
-
+            <v-data-table :headers="tableHeaders" :items="tableData" :items-per-page="10"
+              :items-per-page-options="pageOptions" class="portfolio-table mt-4">
+            </v-data-table>
           </div>
           <div v-else class="mt-2 text-center">
             <h3 class="text-red-accent-2">Please input valid values.</h3>
@@ -94,7 +96,29 @@ export default {
       textInputOptions: {
         format: 'MM/dd/yyyy'
       },
-      errorNotification: ""
+      errorNotification: "",
+      tableHeaders: [
+        {
+          title: 'Age of Entitlement',
+          value: 'ageOfEntitlement',
+          sortable: true,
+        },
+        {
+          title: 'Benefit from Lower Earner Work',
+          value: 'lowerEarnerPayment',
+        },
+        {
+          title: 'Additional Benefit from Spousal Payment',
+          value: 'spousalExcess',
+        }
+      ],
+      tableData: [],
+      pageOptions: [
+        { value: 10, title: '10' },
+        { value: 25, title: '25' },
+        { value: 50, title: '50' },
+        { value: -1, title: '$vuetify.dataFooter.itemsPerPageAll' }
+      ],
     };
   },
   watch: {
@@ -158,9 +182,6 @@ export default {
       this.formattedLowerEarnerBenefit = digits;
     },
     calculate() {
-      // console.log(this.lowerEarnerFileDate, "---this.lowerEarnerFileDate---")
-      // console.log(this.addYearsToDate(this.lowerEarnerDOB, 62), "---new Date(this.addYearsToDate(this.lowerEarnerDOB, 62)---")
-      // console.log(this.addYearsToDate(this.lowerEarnerDOB, 70), "---new Date(this.addYearsToDate(this.lowerEarnerDOB, 62)---")
       if (this.lowerEarnerDOB && this.lowerEarnerFileDate) {
         if ((new Date(this.addYearsToDate(this.lowerEarnerDOB, 62)) > new Date(this.lowerEarnerFileDate)) || (new Date(this.addYearsToDate(this.lowerEarnerDOB, 70)) < new Date(this.lowerEarnerFileDate))) {
           this.validForm = false;
@@ -207,8 +228,6 @@ export default {
         this.lowerEarnerPayment = this.lowerEarnerBenefit * (100 + (retiredMonths - fullRetireMonths) * 2 / 3) / 100;
       }
       retiredMonths = this.getMonthOffset(new Date(this.lowerEarnerDOB), this.getMaxDate(new Date(this.lowerEarnerFileDate), new Date(this.higherEarnerFileDate)));
-      console.log(fullRetireMonths, "-------------fullRetireMonths------")
-      console.log(retiredMonths, "-----fullRetireMonths----")
       if (fullRetireMonths > retiredMonths) {
         if ((fullRetireMonths - retiredMonths) > 36) {
           this.spousalExcess = spousalPayment * (100 - 36 * 25 / 36 - (fullRetireMonths - retiredMonths - 36) * 5 / 12) / 100;
@@ -219,6 +238,48 @@ export default {
         retiredMonths = Math.min(retiredMonths, 70 * 12);
         this.spousalExcess = spousalPayment + this.lowerEarnerBenefit - this.lowerEarnerPayment;
       }
+      this.tableData = [];
+      for (let i = 70 * 12; i >= 62 * 12; i--) {
+        this.addTableRowData(fullRetireMonths, i, spousalPayment)
+      }
+    },
+
+    addTableRowData(fullRetireMonth, retiredMonths, spousalPayment) {
+      let fullRetireMonths = fullRetireMonth;
+      let lowerEarnerPayment;
+      let spousalExcess;
+      if (fullRetireMonths > retiredMonths) {
+        if ((fullRetireMonths - retiredMonths) > 36) {
+          lowerEarnerPayment = this.lowerEarnerBenefit * (100 - 36 * 5 / 9 - (fullRetireMonths - retiredMonths - 36) * 5 / 12) / 100;
+        } else {
+          lowerEarnerPayment = this.lowerEarnerBenefit * (100 - (fullRetireMonths - retiredMonths) * 5 / 9) / 100;
+        }
+      } else {
+        lowerEarnerPayment = this.lowerEarnerBenefit * (100 + (retiredMonths - fullRetireMonths) * 2 / 3) / 100;
+      }
+      if (fullRetireMonths > retiredMonths) {
+        if ((fullRetireMonths - retiredMonths) > 36) {
+          spousalExcess = spousalPayment * (100 - 36 * 25 / 36 - (fullRetireMonths - retiredMonths - 36) * 5 / 12) / 100;
+        } else {
+          spousalExcess = spousalPayment * (100 - (fullRetireMonths - retiredMonths) * 25 / 36) / 100;
+        }
+      } else {
+        retiredMonths = Math.min(retiredMonths, 70 * 12);
+        spousalExcess = spousalPayment + this.lowerEarnerBenefit - lowerEarnerPayment;
+      }
+      let ageOfEntitlement = parseInt(retiredMonths / 12) + ' Years'
+      if (retiredMonths % 12 !== 0) {
+        if (retiredMonths % 12 === 1) {
+          ageOfEntitlement = ageOfEntitlement + ' and 1 month';
+        } else {
+          ageOfEntitlement = ageOfEntitlement + ' and ' + (retiredMonths % 12) + " months";
+        }
+      }
+      this.tableData.push({
+        'ageOfEntitlement': ageOfEntitlement,
+        'lowerEarnerPayment': this.$formatNumberWithCommas(lowerEarnerPayment),
+        'spousalExcess': this.$formatNumberWithCommas(spousalExcess),
+      });
     },
     getMonthOffset(startDate, endDate) {
       // Calculate the difference in months
