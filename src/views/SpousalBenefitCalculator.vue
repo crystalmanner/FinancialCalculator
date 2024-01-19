@@ -4,7 +4,7 @@
       <h1>Social Security Spousal Benefits Calculator</h1>
       <hr>
       <v-row class="pa-2 mt-2">
-        <v-col cols="12" lg="6" md="6" sm="12">
+        <v-col cols="12" lg="4" md="4" sm="12">
           <v-form v-model="validForm">
             <div>
               <v-label>Higher Earner DOB</v-label>
@@ -34,7 +34,7 @@
             </div>
           </v-form>
         </v-col>
-        <v-col cols="12" lg="6" md="6" sm="12">
+        <v-col cols="12" lg="8" md="8" sm="12">
           <div v-if="validForm">
             <div class="d-flex">
               <h3>Payment from Lower Earner's Benefit</h3><v-spacer></v-spacer>
