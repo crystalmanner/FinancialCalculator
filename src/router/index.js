@@ -21,6 +21,11 @@ const routes = [
         name: 'PortfolioCalculator',
         component: () => import('@/views/PortfolioCalculator.vue'),
       },
+      {
+        path: '/expenseratiocalculator',
+        name: 'ExpenseRatioCalculator',
+        component: () => import('@/views/ExpenseRatioCalculator.vue'),
+      },
     ],
   },
 ]
