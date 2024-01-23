@@ -18,6 +18,8 @@
     "chartjs-plugin-datalabels": "^2.2.0",
     "core-js": "^3.29.0",
     "express": "^4.18.2",
+    "html2canvas": "^1.4.1",
+    "jspdf": "^2.5.1",
     "roboto-fontface": "*",
     "serve-static": "^1.15.0",
     "vue": "^3.2.0",

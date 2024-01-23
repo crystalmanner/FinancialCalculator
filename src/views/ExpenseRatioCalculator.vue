@@ -1,6 +1,6 @@
 <template>
-  <v-container class="fill-height">
-    <v-responsive class="fill-height">
+  <v-container class="fill-height ">
+    <v-responsive class="fill-height main-container">
       <h1>Expense Ratio Calculator</h1>
       <hr>
       <v-row class="pa-2 mt-4">
@@ -12,7 +12,8 @@
       </v-row>
       <v-row class="pa-2 mt-4">
         <v-col cols="12" lg="12" md="12" sm="12">
-          <v-data-table :headers="headers" :items="symbolList" :loading="isLoadingTable"></v-data-table>
+          <v-data-table :headers="headers" :items="symbolList" :loading="isLoadingTable"
+            :items-per-page="-1"></v-data-table>
         </v-col>
 
         <v-col cols="12" lg="12" md="12" sm="12">
@@ -24,21 +25,33 @@
           </div>
         </v-col>
         <v-col v-if="!isPrinting" cols="12" lg="12" md="12" sm="12">
-          <v-btn class="float-right ml-4" prepend-icon="mdi-file-pdf-box" outlined :disabled="symbolList.length === 0"
-            @click="exportPdf">
+          <!-- <v-btn class="float-right ml-4" prepend-icon="mdi-file-pdf-box" outlined
+            :disabled="(symbolList.length === 0) || isLoadingTable" @click="exportPdf">
             <template v-slot:prepend>
-              <v-icon color="error" icon="mdi-file-pdf-box" />
+              <v-icon color="error" />
             </template>
             Save
           </v-btn>
-          <v-btn class="float-right" prepend-icon="mdi-printer" outlined :disabled="symbolList.length === 0"
-            @click="print">
+          <v-btn class="float-right" prepend-icon="mdi-printer" outlined
+            :disabled="(symbolList.length === 0) || isLoadingTable" @click="printPage">
             <template v-slot:prepend>
               <v-icon color="primary"></v-icon>
             </template>
             Print
+          </v-btn> -->
+          <v-btn class="float-right ml-4" prepend-icon="mdi-printer" append-icon="mdi-file-pdf-box" outlined
+            :disabled="(symbolList.length === 0) || isLoadingTable" @click="printPage">
+            <template v-slot:prepend>
+              <v-icon color="primary" />
+            </template>
+            <template v-slot:append>
+              <v-icon color="error"></v-icon>
+            </template>
+            Print/Save
           </v-btn>
+
         </v-col>
+        <v-col class="mt-8 mb-8" style="min-height: 50px;">&nbsp;</v-col>
       </v-row>
     </v-responsive>
   </v-container>
@@ -46,6 +59,8 @@
 
 <script>
 import axios from 'axios';
+import html2canvas from 'html2canvas';
+import jsPDF from 'jspdf';
 
 export default {
   components: {},
@@ -159,7 +174,12 @@ export default {
             }
             return item;
           });
-          this.aggregateExpenseRatio = this.totalExpense / accountValue * 100;
+          if (accountValue) {
+            this.aggregateExpenseRatio = this.totalExpense / accountValue * 100;
+          } else {
+            this.aggregateExpenseRatio = 0;
+          }
+
         } catch (error) {
           console.error('Error fetching suggestions:', error);
         } finally {
@@ -186,8 +206,39 @@ export default {
     },
     exportPdf() {
       console.log("---exportPdf--------")
+      this.isPrinting = true;
+      setTimeout(() => {
+        const element = this.$el.querySelector('.main-container');
+        html2canvas(element).then((canvas) => {
+          const imgData = canvas.toDataURL('image/png');
+          const doc = new jsPDF();
+          const imgProps = doc.getImageProperties(imgData);
+          const pdfWidth = doc.internal.pageSize.getWidth();
+          const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+          doc.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+          let heightLeft = imgProps.height;
+          let position = 0;
+
+          doc.addPage();
+          heightLeft -= pdfHeight;
+
+          while (heightLeft >= 0) {
+            position = heightLeft - imgProps.height;
+            doc.addImage(imgData, 'PNG', 0, position, pdfWidth, imgProps.height);
+            doc.addPage();
+            heightLeft -= imgProps.height;
+          }
+
+          const currentDate = new Date();
+          const formattedDate = currentDate.toISOString().split('T')[0]; // Format: YYYY-MM-DD
+          const fileName = `expense-ratio_${formattedDate}.pdf`;
+          doc.save(fileName);
+          this.isPrinting = false;
+        });
+        this.isPrinting = false;
+      }, 100);
     },
-    print() {
+    printPage() {
       console.log("---print--------")
       this.isPrinting = true;
       setTimeout(() => {
