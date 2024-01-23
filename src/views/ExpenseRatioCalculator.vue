@@ -14,6 +14,7 @@
         <v-col cols="12" lg="12" md="12" sm="12">
           <v-data-table :headers="headers" :items="symbolList" :loading="isLoadingTable"></v-data-table>
         </v-col>
+
         <v-col cols="12" lg="12" md="12" sm="12">
           <div class="w-100">
             <h3 class="text-right">Aggregate Expense Ratio: {{ this.aggregateExpenseRatio.toFixed(2) }}%</h3>
@@ -22,7 +23,22 @@
             <h3 class="text-right">Total Expense: {{ $formatNumberWithCommas(this.totalExpense) }}</h3>
           </div>
         </v-col>
-
+        <v-col v-if="!isPrinting" cols="12" lg="12" md="12" sm="12">
+          <v-btn class="float-right ml-4" prepend-icon="mdi-file-pdf-box" outlined :disabled="symbolList.length === 0"
+            @click="exportPdf">
+            <template v-slot:prepend>
+              <v-icon color="error" icon="mdi-file-pdf-box" />
+            </template>
+            Save
+          </v-btn>
+          <v-btn class="float-right" prepend-icon="mdi-printer" outlined :disabled="symbolList.length === 0"
+            @click="print">
+            <template v-slot:prepend>
+              <v-icon color="primary"></v-icon>
+            </template>
+            Print
+          </v-btn>
+        </v-col>
       </v-row>
     </v-responsive>
   </v-container>
@@ -65,6 +81,7 @@ export default {
       isLoadingTable: false,
       aggregateExpenseRatio: 0,
       totalExpense: 0,
+      isPrinting: false,
     }
   },
   watch: {
@@ -166,6 +183,17 @@ export default {
       } else {
         return number.toString();
       }
+    },
+    exportPdf() {
+      console.log("---exportPdf--------")
+    },
+    print() {
+      console.log("---print--------")
+      this.isPrinting = true;
+      setTimeout(() => {
+        window.print();
+        this.isPrinting = false;
+      }, 100);
     }
   },
 };
