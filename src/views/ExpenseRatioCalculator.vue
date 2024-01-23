@@ -14,6 +14,15 @@
         <v-col cols="12" lg="12" md="12" sm="12">
           <v-data-table :headers="headers" :items="symbolList" :loading="isLoadingTable"></v-data-table>
         </v-col>
+        <v-col cols="12" lg="12" md="12" sm="12">
+          <div class="w-100">
+            <h3 class="text-right">Aggregate Expense Ratio: {{ this.aggregateExpenseRatio.toFixed(2) }}%</h3>
+          </div>
+          <div class="w-100">
+            <h3 class="text-right">Total Expense: {{ $formatNumberWithCommas(this.totalExpense) }}</h3>
+          </div>
+        </v-col>
+
       </v-row>
     </v-responsive>
   </v-container>
@@ -42,14 +51,20 @@ export default {
         },
         {
           key: 'netExpenseRatio',
-          title: 'Expense Ratio (net)',
+          title: 'Expense Ratio % (net)',
         },
         {
           key: 'typeDisp',
           title: 'Type'
-        }
+        },
+        {
+          key: 'netAssets',
+          title: 'Net Assets'
+        },
       ],
       isLoadingTable: false,
+      aggregateExpenseRatio: 0,
+      totalExpense: 0,
     }
   },
   watch: {
@@ -74,17 +89,27 @@ export default {
       }
       this.isLoading = true;
       try {
-        const response = await axios.get('https://yahoo-finance15.p.rapidapi.com/api/v1/markets/search', {
+        // const response = await axios.get('https://yahoo-finance15.p.rapidapi.com/api/v1/markets/search', {
+        //   params: {
+        //     search: event.target.value,
+        //   },
+        //   headers: {
+        //     'X-RapidAPI-Key': '942716142amsh001ada363bce707p1684d6jsn51a76cf464d0',
+        //     'X-RapidAPI-Host': 'yahoo-finance15.p.rapidapi.com',
+        //     'Content-Type': 'application/json'
+        //   }
+        // });
+        // this.filteredSymbols = response.data.body;
+        const response = await axios.get('https://financialmodelingprep.com/api/v3/search', {
           params: {
-            search: event.target.value,
+            query: event.target.value,
+            apikey: 'BvlY2k8x8IJr4RhhISejING0wttVc9s4',
           },
           headers: {
-            'X-RapidAPI-Key': '942716142amsh001ada363bce707p1684d6jsn51a76cf464d0',
-            'X-RapidAPI-Host': 'yahoo-finance15.p.rapidapi.com',
             'Content-Type': 'application/json'
           }
         });
-        this.filteredSymbols = response.data.body;
+        this.filteredSymbols = response.data;
       } catch (error) {
         console.error('Error fetching suggestions:', error);
       } finally {
@@ -92,25 +117,54 @@ export default {
       }
     },
     async getSymbolExpenseRatio() {
-      console.log(this.selectedSymbols, "----this.selectedSymbols-----")
-      this.isLoadingTable = true;
-      try {
-        const response = await axios.get('https://yahoo-finance15.p.rapidapi.com/api/v1/markets/stock/quotes', {
-          params: {
-            ticker: this.selectedSymbols.join(', '),
-          },
-          headers: {
-            'X-RapidAPI-Key': '942716142amsh001ada363bce707p1684d6jsn51a76cf464d0',
-            'X-RapidAPI-Host': 'yahoo-finance15.p.rapidapi.com',
-            'Content-Type': 'application/json'
-          }
-        });
-        this.symbolList = response.data.body;
-        console.log(this.symbolList, "---this.symbolList----")
-      } catch (error) {
-        console.error('Error fetching suggestions:', error);
-      } finally {
-        this.isLoadingTable = false;
+      if (this.selectedSymbols.length > 0) {
+        this.isLoadingTable = true;
+        try {
+          const response = await axios.get('https://yahoo-finance15.p.rapidapi.com/api/v1/markets/stock/quotes', {
+            params: {
+              ticker: this.selectedSymbols.join(', '),
+            },
+            headers: {
+              'X-RapidAPI-Key': '942716142amsh001ada363bce707p1684d6jsn51a76cf464d0',
+              'X-RapidAPI-Host': 'yahoo-finance15.p.rapidapi.com',
+              'Content-Type': 'application/json'
+            }
+          });
+          this.aggregateExpenseRatio = 0;
+          this.totalExpense = 0;
+          let accountValue = 0;
+          this.symbolList = response.data.body.map((item) => {
+            if (item.netExpenseRatio && item.netAssets) {
+              this.totalExpense += item.netExpenseRatio * item.netAssets / 100;
+              accountValue += item.netAssets;
+              item.netExpenseRatio += '%';
+              item.netAssets = this.formatLargeNumber(item.netAssets);
+            }
+            return item;
+          });
+          this.aggregateExpenseRatio = this.totalExpense / accountValue * 100;
+        } catch (error) {
+          console.error('Error fetching suggestions:', error);
+        } finally {
+          this.isLoadingTable = false;
+        }
+      } else {
+        this.symbolList = [];
+      }
+    },
+    formatLargeNumber(number) {
+      const billion = 1e9;
+      const million = 1e6;
+      const thousand = 1e3;
+
+      if (number >= billion) {
+        return (number / billion).toFixed(2) + 'B';
+      } else if (number >= million) {
+        return (number / million).toFixed(2) + 'M';
+      } else if (number >= thousand) {
+        return (number / thousand).toFixed(2) + 'K';
+      } else {
+        return number.toString();
       }
     }
   },
