@@ -92,6 +92,10 @@
             <h3 class="text-right">Total Expense Ratio: {{ this.totalExpenseRatio.toFixed(2) }}%</h3>
           </div>
         </v-col>
+        <v-col cols="12" lg="12" md="12" sm="12">
+          <p class="text-subtitle-2 text-center">Disclaimer: Expense ratio left to 0% unless symbol is input and API
+            returns expense ratio.</p>
+        </v-col>
         <v-col v-if="!isPrinting" cols="12" lg="12" md="12" sm="12">
 
           <v-btn class="float-right ml-4" prepend-icon="mdi-printer" append-icon="mdi-file-pdf-box" outlined
