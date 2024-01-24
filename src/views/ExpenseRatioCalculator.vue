@@ -74,24 +74,24 @@ export default {
       headers: [
         {
           key: 'symbol',
-          title: 'Symbol',
+          title: 'Investment Description or Symbol',
         },
+        // {
+        //   key: 'longName',
+        //   title: 'Name',
+        // },
         {
-          key: 'longName',
-          title: 'Name',
+          key: 'currentValue',
+          title: 'Current Value'
         },
         {
           key: 'netExpenseRatio',
-          title: 'Expense Ratio % (net)',
+          title: 'Expense Ratio',
         },
-        {
-          key: 'typeDisp',
-          title: 'Type'
-        },
-        {
-          key: 'netAssets',
-          title: 'Net Assets'
-        },
+        // {
+        //   key: 'typeDisp',
+        //   title: 'Type'
+        // },
       ],
       isLoadingTable: false,
       aggregateExpenseRatio: 0,
