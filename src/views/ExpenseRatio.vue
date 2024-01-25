@@ -100,7 +100,7 @@
             </template>
           </v-data-table>
           <v-btn variant="text" color="primary" prepend-icon="mdi-plus-circle" @click="addAdditionalRows()">
-            Add New Items
+            Add additional investments
           </v-btn>
         </v-col>
         <v-col cols="12" lg="12" md="12" sm="12">
