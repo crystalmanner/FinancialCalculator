@@ -27,8 +27,8 @@
                             @input="stripCurrentValueFormatting" prefix="$"></v-text-field>
                         </v-col>
                         <v-col cols="12" sm="12" md="12">
-                          <v-text-field v-model.number="editedItem.netExpenseRatio" label="Expense Ratio(Read Only)"
-                            suffix="%" readonly></v-text-field>
+                          <v-text-field v-model.number="editedItem.netExpenseRatio" label="Expense Ratio"
+                            suffix="%"></v-text-field>
                         </v-col>
                       </v-row>
                     </v-container>
@@ -73,6 +73,9 @@
             <template v-slot:item.currentValue="{ item }">
               <div v-if="item.isAdded">
                 {{ $formatNumberWithCommas(parseFloat(item.currentValue)) }}
+              </div>
+              <div v-else>
+                Please Add the Current Value of this Investment
               </div>
             </template>
             <template v-slot:item.netExpenseRatio="{ item }">
