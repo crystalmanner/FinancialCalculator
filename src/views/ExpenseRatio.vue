@@ -66,13 +66,13 @@
               <div v-if="item.isAdded">
                 {{ item.symbol }}
               </div>
+              <div v-else>
+                Please Add Your Investment Description or Symbol
+              </div>
             </template>
             <template v-slot:item.currentValue="{ item }">
               <div v-if="item.isAdded">
                 {{ $formatNumberWithCommas(parseFloat(item.currentValue)) }}
-              </div>
-              <div v-else>
-                Please Add Your Investment Description or Symbol
               </div>
             </template>
             <template v-slot:item.netExpenseRatio="{ item }">
