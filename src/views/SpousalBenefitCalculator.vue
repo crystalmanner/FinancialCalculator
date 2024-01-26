@@ -199,7 +199,7 @@ export default {
         this.validForm = false;
         return;
       }
-      let spousalPayment = Math.max(this.higherEarnerBenefit / 2 - this.lowerEarnerBenefit, 0);
+      let spousalPayment = Math.max(parseFloat(this.higherEarnerBenefit) / 2 - parseFloat(this.lowerEarnerBenefit), 0);
       if (!this.meetDivorcedBenefit && !this.higherEarnerFileDate) {
         spousalPayment = 0;
       }
@@ -227,6 +227,8 @@ export default {
       retiredMonths = this.getMonthOffset(new Date(this.lowerEarnerDOB), this.getMaxDate(new Date(this.lowerEarnerFileDate), new Date(this.higherEarnerFileDate)));
       let lowerEarnerPayment = this.getLowerEarnerPayment(fullRetireMonths, retiredMonths);
       this.spousalExcessTitle = 'Additional Benefit from Spousal Payment at ' + this.getYearsMonth(retiredMonths) + "*";
+      console.log(fullRetireMonths, "----fullRetireMonths---")
+      console.log(retiredMonths, "-----fullRetireMonths----")
       if (fullRetireMonths > retiredMonths) {
         if ((fullRetireMonths - retiredMonths) > 36) {
           this.spousalExcess = spousalPayment * (100 - 36 * 25 / 36 - (fullRetireMonths - retiredMonths - 36) * 5 / 12) / 100;
@@ -235,7 +237,7 @@ export default {
         }
       } else {
         retiredMonths = Math.min(retiredMonths, 70 * 12);
-        this.spousalExcess = spousalPayment + this.lowerEarnerBenefit - lowerEarnerPayment;
+        this.spousalExcess = Math.max(spousalPayment + parseFloat(this.lowerEarnerBenefit) - lowerEarnerPayment, 0);
       }
       // this.tableData = [];
       // for (let i = 70 * 12; i >= 62 * 12; i--) {
