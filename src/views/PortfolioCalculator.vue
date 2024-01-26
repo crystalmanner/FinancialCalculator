@@ -1,7 +1,8 @@
 <template>
   <v-container class="fill-height">
     <v-responsive class="fill-height">
-      <h1>Total Fee Comparison Calculator</h1>
+      <Header />
+      <h2>Total Fee Comparison Calculator</h2>
       <hr>
       <v-row class="pa-2 mt-4">
         <v-col cols="12" lg="6" md="6" sm="12">
@@ -75,14 +76,14 @@
         </v-col>
         <v-col cols="12" lg="6" md="6" sm="12">
           <div v-if="validForm">
-            <h2>FACE VALUE&nbsp;
+            <h3>FACE VALUE&nbsp;
               <v-tooltip location="bottom">
                 <template v-slot:activator="{ props }">
                   <v-icon icon="mdi-help-circle" class="mb-1 cursor-pointer" size="md" v-bind="props" start />
                 </template>
                 <span>Face Value is the difference of the two cumulative fee amounts over the period selected.</span>
               </v-tooltip>
-            </h2>
+            </h3>
             <div class="d-flex">
               <div class="width-50">
                 <h4>Current Portfolio</h4>
@@ -130,7 +131,7 @@
                 </h4>
               </div>
             </div>
-            <h2 class="mt-2">REAL VALUE&nbsp;
+            <h3 class="mt-2">REAL VALUE&nbsp;
               <v-tooltip location="bottom">
                 <template v-slot:activator="{ props }">
                   <v-icon icon="mdi-help-circle" class="mb-1 cursor-pointer" size="md" v-bind="props" start />
@@ -138,7 +139,7 @@
                 <span>Real Value is the difference in ending account value assuming the decreased fees remained invested
                   over the period selected.</span>
               </v-tooltip>
-            </h2>
+            </h3>
             <div class="d-flex">
               <div class="width-50">
                 <h4>Current Portfolio</h4>
@@ -194,6 +195,7 @@
 </template>
 
 <script>
+import Header from '@/components/Header.vue'
 import VueDatePicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css';
 import {
@@ -221,7 +223,7 @@ ChartJS.register(
 )
 
 export default {
-  components: { VueDatePicker, Line },
+  components: { VueDatePicker, Line, Header },
   data() {
     return {
       validForm: true,

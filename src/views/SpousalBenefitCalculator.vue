@@ -1,7 +1,8 @@
 <template>
   <v-container class="fill-height">
     <v-responsive class="fill-height">
-      <h1>Social Security Spousal Benefits Calculator</h1>
+      <Header />
+      <h2>Social Security Spousal Benefits Calculator</h2>
       <hr>
       <v-row class="pa-2 mt-2">
         <v-col cols="12" lg="4" md="4" sm="12">
@@ -74,11 +75,12 @@
 </template>
 
 <script>
+import Header from '@/components/Header.vue'
 import VueDatePicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css';
 
 export default {
-  components: { VueDatePicker },
+  components: { VueDatePicker, Header },
   data() {
     return {
       validForm: true,

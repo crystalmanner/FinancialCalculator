@@ -1,7 +1,8 @@
 <template>
   <v-container class="fill-height ">
     <v-responsive class="fill-height main-container">
-      <h1>Expense Ratio Calculator</h1>
+      <Header />
+      <h2>Expense Ratio Calculator</h2>
       <hr>
       <v-row class="pa-2 mt-4">
         <v-col cols="12" lg="12" md="12" sm="12">
@@ -137,9 +138,12 @@
 
 <script>
 import axios from 'axios';
+import Header from '@/components/Header.vue'
 
 export default {
-  components: {},
+  components: {
+    Header,
+  },
   data() {
     return {
       dialog: false,

@@ -1,7 +1,8 @@
 <template>
   <v-container class="fill-height">
     <v-responsive class="fill-height">
-      <h1>Advisory Fee Comparison Calculator</h1>
+      <Header />
+      <h2>Advisory Fee Comparison Calculator</h2>
       <hr>
       <v-row class="pa-2 mt-4">
         <v-col cols="12" lg="4" md="4" sm="12">
@@ -41,14 +42,14 @@
         </v-col>
         <v-col cols="12" lg="8" md="8" sm="12">
           <div v-if="validForm">
-            <h2>FACE VALUE&nbsp;
+            <div class="big-text">FACE VALUE&nbsp;
               <v-tooltip location="bottom">
                 <template v-slot:activator="{ props }">
                   <v-icon icon="mdi-help-circle" class="mb-1 cursor-pointer" size="md" v-bind="props" start />
                 </template>
                 <span>Face Value is the difference of the two cumulative fee amounts over the period selected.</span>
               </v-tooltip>
-            </h2>
+            </div>
             <div class="d-flex">
               <h3>% Fee</h3><v-spacer></v-spacer>
               <p>{{ $formatNumberWithCommas(totalPercentFee) }}</p>
@@ -62,7 +63,7 @@
               <h3>Difference</h3><v-spacer></v-spacer>
               <p>{{ $formatNumberWithCommas(Math.abs(totalPercentFee - totalFlatFee)) }}</p>
             </div>
-            <h2 class="mt-2">REAL VALUE&nbsp;
+            <div class="big-text mt-2">REAL VALUE&nbsp;
               <v-tooltip location="bottom">
                 <template v-slot:activator="{ props }">
                   <v-icon icon="mdi-help-circle" class="mb-1 cursor-pointer" size="md" v-bind="props" start />
@@ -70,7 +71,7 @@
                 <span>Real Value is the difference in ending account value assuming the decreased fees remained invested
                   over the period selected.</span>
               </v-tooltip>
-            </h2>
+            </div>
             <div class="d-flex">
               <h3>% Fee</h3><v-spacer></v-spacer>
               <p>{{ $formatNumberWithCommas(percentAccountValue) }}</p>
@@ -120,6 +121,7 @@
 </template>
 
 <script>
+import Header from '@/components/Header.vue'
 import VueDatePicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css';
 import {
@@ -147,7 +149,7 @@ ChartJS.register(
 )
 
 export default {
-  components: { VueDatePicker, Line },
+  components: { VueDatePicker, Line, Header },
   data() {
     return {
       validForm: true,
@@ -425,5 +427,10 @@ export default {
 
 .cursor-pointer {
   cursor: pointer;
+}
+
+.big-text {
+  font-size: 20px;
+  font-weight: 700;
 }
 </style>
