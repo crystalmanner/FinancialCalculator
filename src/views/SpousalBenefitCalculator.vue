@@ -39,13 +39,13 @@
           <div v-if="validForm">
             <div class="d-flex">
               <div class="title">{{ lowerEarnerPaymentTitle }}</div><v-spacer></v-spacer>
-              <div class="result-value text-light-blue-darken-2">
+              <div class="result-value text-light-blue-accent-3">
                 {{ $formatNumberWithCommas(customRound(lowerEarnerPayment)) }}
               </div>
             </div>
             <div class="d-flex">
               <div class="title">{{ spousalExcessTitle }}</div><v-spacer></v-spacer>
-              <p class="result-value text-light-blue-darken-2">{{ $formatNumberWithCommas(customRound(spousalExcess)) }}
+              <p class="result-value text-light-blue-accent-3">{{ $formatNumberWithCommas(customRound(spousalExcess)) }}
               </p>
             </div>
             <!-- <hr>
