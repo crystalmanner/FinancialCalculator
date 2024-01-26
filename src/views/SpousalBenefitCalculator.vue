@@ -38,12 +38,15 @@
         <v-col cols="12" lg="8" md="8" sm="12">
           <div v-if="validForm">
             <div class="d-flex">
-              <h4>{{ lowerEarnerPaymentTitle }}</h4><v-spacer></v-spacer>
-              <h4> {{ $formatNumberWithCommas(customRound(lowerEarnerPayment)) }}</h4>
+              <div class="title">{{ lowerEarnerPaymentTitle }}</div><v-spacer></v-spacer>
+              <div class="result-value text-light-blue-darken-2">
+                {{ $formatNumberWithCommas(customRound(lowerEarnerPayment)) }}
+              </div>
             </div>
             <div class="d-flex">
-              <h4>{{ spousalExcessTitle }}</h4><v-spacer></v-spacer>
-              <h4>{{ $formatNumberWithCommas(customRound(spousalExcess)) }}</h4>
+              <div class="title">{{ spousalExcessTitle }}</div><v-spacer></v-spacer>
+              <p class="result-value text-light-blue-darken-2">{{ $formatNumberWithCommas(customRound(spousalExcess)) }}
+              </p>
             </div>
             <!-- <hr>
             <div class="d-flex">
@@ -223,12 +226,13 @@ export default {
       let retiredMonths = this.getMonthOffset(new Date(this.lowerEarnerDOB), new Date(this.lowerEarnerFileDate));
       this.lowerEarnerPaymentTitle = 'Benefit from Lower Earner Work at ' + this.getYearsMonth(retiredMonths) + "*";
       this.lowerEarnerPayment = this.getLowerEarnerPayment(fullRetireMonths, retiredMonths);
-
-      retiredMonths = this.getMonthOffset(new Date(this.lowerEarnerDOB), this.getMaxDate(new Date(this.lowerEarnerFileDate), new Date(this.higherEarnerFileDate)));
+      if (this.meetDivorcedBenefit) {
+        retiredMonths = this.getMonthOffset(new Date(this.lowerEarnerDOB), new Date(this.lowerEarnerFileDate));
+      } else {
+        retiredMonths = this.getMonthOffset(new Date(this.lowerEarnerDOB), this.getMaxDate(new Date(this.lowerEarnerFileDate), new Date(this.higherEarnerFileDate)));
+      }
       let lowerEarnerPayment = this.getLowerEarnerPayment(fullRetireMonths, retiredMonths);
       this.spousalExcessTitle = 'Additional Benefit from Spousal Payment at ' + this.getYearsMonth(retiredMonths) + "*";
-      console.log(fullRetireMonths, "----fullRetireMonths---")
-      console.log(retiredMonths, "-----fullRetireMonths----")
       if (fullRetireMonths > retiredMonths) {
         if ((fullRetireMonths - retiredMonths) > 36) {
           this.spousalExcess = spousalPayment * (100 - 36 * 25 / 36 - (fullRetireMonths - retiredMonths - 36) * 5 / 12) / 100;
@@ -364,5 +368,11 @@ export default {
 
 .cursor-pointer {
   cursor: pointer;
+}
+
+.title,
+.result-value {
+  font-size: 20px;
+  font-weight: 700;
 }
 </style>
