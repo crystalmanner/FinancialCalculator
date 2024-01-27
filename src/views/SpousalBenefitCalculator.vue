@@ -228,6 +228,7 @@ export default {
       if (this.meetDivorcedBenefit) {
         retiredMonths = this.getMonthOffset(new Date(this.lowerEarnerDOB), new Date(this.lowerEarnerFileDate));
       } else {
+        // retiredMonths = this.getMonthOffset(new Date(this.lowerEarnerDOB), new Date(this.lowerEarnerFileDate));
         retiredMonths = this.getMonthOffset(new Date(this.lowerEarnerDOB), this.getMaxDate(new Date(this.lowerEarnerFileDate), new Date(this.higherEarnerFileDate)));
       }
       let lowerEarnerPayment = this.getLowerEarnerPayment(fullRetireMonths, retiredMonths);
@@ -243,8 +244,8 @@ export default {
         console.log(spousalPayment, "----spousalPayment---")
         console.log(this.lowerEarnerBenefit, "----this.lowerEarnerBenefit---")
         console.log(lowerEarnerPayment, "----lowerEarnerPayment---")
-        // this.spousalExcess = Math.max(spousalPayment + parseFloat(this.lowerEarnerBenefit) - lowerEarnerPayment, 0);
-        this.spousalExcess = Math.max(spousalPayment, 0)
+        this.spousalExcess = Math.max(spousalPayment + parseFloat(this.lowerEarnerBenefit) - lowerEarnerPayment, 0);
+        // this.spousalExcess = Math.max(spousalPayment, 0)
       }
       // this.tableData = [];
       // for (let i = 70 * 12; i >= 62 * 12; i--) {
