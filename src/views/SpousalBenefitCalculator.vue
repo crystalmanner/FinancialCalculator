@@ -240,7 +240,11 @@ export default {
         }
       } else {
         retiredMonths = Math.min(retiredMonths, 70 * 12);
-        this.spousalExcess = Math.max(spousalPayment + parseFloat(this.lowerEarnerBenefit) - lowerEarnerPayment, 0);
+        console.log(spousalPayment, "----spousalPayment---")
+        console.log(this.lowerEarnerBenefit, "----this.lowerEarnerBenefit---")
+        console.log(lowerEarnerPayment, "----lowerEarnerPayment---")
+        // this.spousalExcess = Math.max(spousalPayment + parseFloat(this.lowerEarnerBenefit) - lowerEarnerPayment, 0);
+        this.spousalExcess = Math.max(spousalPayment, 0)
       }
       // this.tableData = [];
       // for (let i = 70 * 12; i >= 62 * 12; i--) {
