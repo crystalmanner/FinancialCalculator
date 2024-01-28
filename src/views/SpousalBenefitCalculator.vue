@@ -251,7 +251,7 @@ export default {
 
       let lowerRetireMonths = this.getMonthOffset(new Date(this.lowerEarnerDOB), new Date(this.lowerEarnerFileDate))
       let higherRetireMonths = this.getMonthOffset(new Date(this.lowerEarnerDOB), new Date(this.higherEarnerFileDate))
-      if ((lowerRetireMonths < fullRetireMonths) && (higherRetireMonths >= fullRetireMonths)) {
+      if ((lowerRetireMonths < fullRetireMonths) && (higherRetireMonths >= fullRetireMonths) && !this.meetDivorcedBenefit) {
         this.spousalExcess = Math.max(spousalPayment, 0)
       }
     },
