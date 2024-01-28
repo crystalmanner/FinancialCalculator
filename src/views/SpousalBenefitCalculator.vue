@@ -247,12 +247,13 @@ export default {
         console.log(this.lowerEarnerBenefit, "----this.lowerEarnerBenefit---")
         console.log(lowerEarnerPayment, "----lowerEarnerPayment---")
         this.spousalExcess = Math.max(spousalPayment + parseFloat(this.lowerEarnerBenefit) - lowerEarnerPayment, 0);
-        // this.spousalExcess = Math.max(spousalPayment, 0)
       }
-      // this.tableData = [];
-      // for (let i = 70 * 12; i >= 62 * 12; i--) {
-      //   this.addTableRowData(fullRetireMonths, i, spousalPayment)
-      // }
+
+      let lowerRetireMonths = this.getMonthOffset(new Date(this.lowerEarnerDOB), new Date(this.lowerEarnerFileDate))
+      let higherRetireMonths = this.getMonthOffset(new Date(this.lowerEarnerDOB), new Date(this.higherEarnerFileDate))
+      if ((lowerRetireMonths < fullRetireMonths) && (higherRetireMonths >= fullRetireMonths)) {
+        this.spousalExcess = Math.max(spousalPayment, 0)
+      }
     },
     getLowerEarnerPayment(fullRetireMonths, retiredMonths) {
       if (fullRetireMonths > retiredMonths) {
