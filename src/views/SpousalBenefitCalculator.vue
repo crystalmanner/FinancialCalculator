@@ -16,12 +16,10 @@
               min="1943-01-02"></v-text-field>
 
             <v-text-field v-model="higherEarnerFileDate" label="Date Higher Earner Will File" type="date"
-              :rules="[higherEarnerFileDateRule]" :min="convertDateToString(addYearsToDate(higherEarnerDOB, 62))"
-              :max="convertDateToString(addYearsToDate(higherEarnerDOB, 70))"></v-text-field>
+              :rules="[higherEarnerFileDateRule]"></v-text-field>
 
             <v-text-field v-model="lowerEarnerFileDate" label="Date Lower Earner Will File" type="date"
-              :rules="[lowerEarnerFileDateRule]" :min="convertDateToString(addYearsToDate(lowerEarnerDOB, 62))"
-              :max="convertDateToString(addYearsToDate(lowerEarnerDOB, 70))"></v-text-field>
+              :rules="[lowerEarnerFileDateRule]"></v-text-field>
 
             <v-text-field class="mt-2" v-model="formattedHigherEarnerBenefit" :rules="[$textGreaterThanNegativeRule]"
               label="Higher Earner Full Retirement Age Benefit" type="text" prefix="$"
