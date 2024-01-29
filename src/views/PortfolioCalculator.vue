@@ -669,12 +669,13 @@ export default {
 
 .text-field-label a {
   font-size: 12px;
-  color: rgba(0, 0, 0, 0.87);
-  opacity: 0.6;
+  /* color: rgba(0, 0, 0, 0.87);
+  opacity: 0.6; */
   position: relative;
   top: 26px;
   left: 8px;
   z-index: 999;
+  color: rgb(0, 0, 238);
 }
 
 .text-field-label input {
