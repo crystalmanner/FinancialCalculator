@@ -26,6 +26,11 @@ const routes = [
         name: 'ExpenseRatioCalculator',
         component: () => import('@/views/ExpenseRatio.vue'),
       },
+      {
+        path: '/social-security-break-even-calculator',
+        name: 'SocialSecurityBreakEvenCalculator',
+        component: () => import('@/views/SocialSecurityBreakEvenCalculator.vue'),
+      },
     ],
   },
 ]

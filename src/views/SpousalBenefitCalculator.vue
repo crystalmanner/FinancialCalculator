@@ -205,6 +205,9 @@ export default {
       if (!this.meetDivorcedBenefit && !this.higherEarnerFileDate) {
         spousalPayment = 0;
       }
+      if (!spousalPayment) {
+        spousalPayment = 0;
+      }
       let fullRetireMonths = 0;
       if (new Date(this.lowerEarnerDOB) > new Date('01/01/1960')) {
         // 67 years and 0 month
