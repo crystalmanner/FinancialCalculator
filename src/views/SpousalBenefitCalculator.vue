@@ -6,33 +6,33 @@
       <hr>
       <v-row class="pa-2 mt-2">
         <v-col cols="12" lg="4" md="4" sm="12">
-          <v-form v-model="validForm">
-            <div>
-              <v-label>Higher Earner DOB</v-label>
-              <VueDatePicker v-model="higherEarnerDOB" :enable-time-picker="false" min-date="01/02/1943"
-                :auto-position="false" :text-input="textInputOptions" />
-              <v-label class="mt-2">Lower Earner DOB</v-label>
-              <VueDatePicker v-model="lowerEarnerDOB" :enable-time-picker="false" min-date="01/02/1943"
-                :auto-position="false" :text-input="textInputOptions" />
-              <v-label class="mt-2">Date Higher Earner Will File</v-label>
-              <VueDatePicker v-model="higherEarnerFileDate" :enable-time-picker="false"
-                :min-date="addYearsToDate(higherEarnerDOB, 62)" :max-date="addYearsToDate(higherEarnerDOB, 70)"
-                :auto-position="false" :text-input="textInputOptions" />
-              <v-label class="mt-2">Date Lower Earner Will File</v-label>
-              <VueDatePicker v-model="lowerEarnerFileDate" :enable-time-picker="false"
-                :min-date="addYearsToDate(lowerEarnerDOB, 62)" :max-date="addYearsToDate(lowerEarnerDOB, 70)"
-                :auto-position="false" :text-input="textInputOptions" />
-              <v-text-field class="mt-2" v-model="formattedHigherEarnerBenefit" :rules="[$textGreaterThanNegativeRule]"
-                label="Higher Earner Full Retirement Age Benefit" type="text" prefix="$"
-                hint="The full retirement age benefit the higher earning spouse earned from their own work"
-                @blur="formatHigherEarnerBenefit" @input="stripHigherEarnerBenefitFormatting" dense></v-text-field>
-              <v-text-field class="mt-2" v-model="formattedLowerEarnerBenefit" :rules="[$textGreaterThanNegativeRule]"
-                label="Lower Earner Full Retirement Age Benefit" type="text" prefix="$"
-                hint="The full retirement age benefit the lower earning spouse earned from their own work"
-                @blur="formatLowerEarnerBenefit" @input="stripLowerEarnerBenefitFormatting" dense></v-text-field>
-              <v-checkbox v-model="meetDivorcedBenefit"
-                label="Do you meet the qualifications for a divorced spouse benefit?"></v-checkbox>
-            </div>
+
+          <v-form ref="form" v-model="validForm">
+
+            <v-text-field v-model="higherEarnerDOB" label="Higher Earner DOB" type="date" :rules="[dateBiggerThan1943]"
+              min="1943-01-02"></v-text-field>
+
+            <v-text-field v-model="lowerEarnerDOB" label="Lower Earner DOB" type="date" :rules="[dateBiggerThan1943]"
+              min="1943-01-02"></v-text-field>
+
+            <v-text-field v-model="higherEarnerFileDate" label="Date Higher Earner Will File" type="date"
+              :rules="[higherEarnerFileDateRule]" :min="convertDateToString(addYearsToDate(higherEarnerDOB, 62))"
+              :max="convertDateToString(addYearsToDate(higherEarnerDOB, 70))"></v-text-field>
+
+            <v-text-field v-model="lowerEarnerFileDate" label="Date Lower Earner Will File" type="date"
+              :rules="[lowerEarnerFileDateRule]" :min="convertDateToString(addYearsToDate(lowerEarnerDOB, 62))"
+              :max="convertDateToString(addYearsToDate(lowerEarnerDOB, 70))"></v-text-field>
+
+            <v-text-field class="mt-2" v-model="formattedHigherEarnerBenefit" :rules="[$textGreaterThanNegativeRule]"
+              label="Higher Earner Full Retirement Age Benefit" type="text" prefix="$"
+              hint="The full retirement age benefit the higher earning spouse earned from their own work"
+              @blur="formatHigherEarnerBenefit" @input="stripHigherEarnerBenefitFormatting" dense></v-text-field>
+            <v-text-field class="mt-2" v-model="formattedLowerEarnerBenefit" :rules="[$textGreaterThanNegativeRule]"
+              label="Lower Earner Full Retirement Age Benefit" type="text" prefix="$"
+              hint="The full retirement age benefit the lower earning spouse earned from their own work"
+              @blur="formatLowerEarnerBenefit" @input="stripLowerEarnerBenefitFormatting" dense></v-text-field>
+            <v-checkbox v-model="meetDivorcedBenefit"
+              label="Do you meet the qualifications for a divorced spouse benefit?"></v-checkbox>
           </v-form>
         </v-col>
         <v-col cols="12" lg="8" md="8" sm="12">
@@ -86,10 +86,10 @@ export default {
   data() {
     return {
       validForm: true,
-      higherEarnerDOB: "01/15/1960",
-      lowerEarnerDOB: "01/15/1960",
-      higherEarnerFileDate: "01/15/2027",
-      lowerEarnerFileDate: "01/15/2027",
+      higherEarnerDOB: "1960-01-15",
+      lowerEarnerDOB: "1960-01-15",
+      higherEarnerFileDate: "2027-01-15",
+      lowerEarnerFileDate: "2027-01-15",
       higherEarnerBenefit: 3000,
       formattedHigherEarnerBenefit: '3,000',
       lowerEarnerBenefit: 1200,
@@ -97,9 +97,6 @@ export default {
       lowerEarnerPayment: 0,
       spousalExcess: 0,
       meetDivorcedBenefit: false,
-      textInputOptions: {
-        format: 'MM/dd/yyyy'
-      },
       errorNotification: "",
       tableHeaders: [
         {
@@ -129,24 +126,31 @@ export default {
   },
   watch: {
     higherEarnerDOB() {
+      this.$refs.form.validate();
       this.calculate();
     },
     lowerEarnerDOB() {
+      this.$refs.form.validate();
       this.calculate();
     },
     higherEarnerFileDate() {
+      this.$refs.form.validate();
       this.calculate();
     },
     lowerEarnerFileDate() {
+      this.$refs.form.validate();
       this.calculate();
     },
     higherEarnerBenefit() {
+      this.$refs.form.validate();
       this.calculate();
     },
     lowerEarnerBenefit() {
+      this.$refs.form.validate();
       this.calculate();
     },
     meetDivorcedBenefit() {
+      this.$refs.form.validate();
       this.calculate();
     },
   },
@@ -188,19 +192,19 @@ export default {
       this.formattedLowerEarnerBenefit = digits;
     },
     calculate() {
-      if (this.lowerEarnerDOB && this.lowerEarnerFileDate) {
-        if ((new Date(this.addYearsToDate(this.lowerEarnerDOB, 62)) > new Date(this.lowerEarnerFileDate)) || (new Date(this.addYearsToDate(this.lowerEarnerDOB, 70)) < new Date(this.lowerEarnerFileDate))) {
-          this.validForm = false;
-          this.errorNotification = "Filling ages should be 62~70.";
-          return;
-        }
-        this.errorNotification = "";
-        this.validForm = true;
-      } else {
-        this.errorNotification = "Please input valid dates";
-        this.validForm = false;
-        return;
-      }
+      // if (this.lowerEarnerDOB && this.lowerEarnerFileDate) {
+      //   if ((new Date(this.addYearsToDate(this.lowerEarnerDOB, 62)) > new Date(this.lowerEarnerFileDate)) || (new Date(this.addYearsToDate(this.lowerEarnerDOB, 70)) < new Date(this.lowerEarnerFileDate))) {
+      //     this.validForm = false;
+      //     this.errorNotification = "Filling ages should be 62~70.";
+      //     return;
+      //   }
+      //   this.errorNotification = "";
+      //   this.validForm = true;
+      // } else {
+      //   this.errorNotification = "Please input valid dates";
+      //   this.validForm = false;
+      //   return;
+      // }
       let spousalPayment = Math.max(parseFloat(this.higherEarnerBenefit) / 2 - parseFloat(this.lowerEarnerBenefit), 0);
       if (!this.meetDivorcedBenefit && !this.higherEarnerFileDate) {
         spousalPayment = 0;
@@ -246,9 +250,6 @@ export default {
         }
       } else {
         retiredMonths = Math.min(retiredMonths, 70 * 12);
-        console.log(spousalPayment, "----spousalPayment---")
-        console.log(this.lowerEarnerBenefit, "----this.lowerEarnerBenefit---")
-        console.log(lowerEarnerPayment, "----lowerEarnerPayment---")
         this.spousalExcess = Math.max(spousalPayment + parseFloat(this.lowerEarnerBenefit) - lowerEarnerPayment, 0);
       }
 
@@ -345,6 +346,30 @@ export default {
         // If decimal part is less than 0.5, use Math.floor()
         return Math.floor(value);
       }
+    },
+    dateBiggerThan1943(date) {
+      if (!date || (new Date(date) < new Date('1943-01-02'))) {
+        return `Please choose a date that is after January 1, 1943.`; // Validation fails
+      }
+      return true; // Validation passes
+    },
+    convertDateToString(date) {
+      return date.toISOString().slice(0, 10);
+    },
+    add1HourToDate(date) {
+      return date.setHours(date.getHours() + 1);
+    },
+    higherEarnerFileDateRule(date) {
+      if (!this.meetDivorcedBenefit && (!date || (this.add1HourToDate(new Date(date)) < this.addYearsToDate(this.higherEarnerDOB, 62)) || (new Date(date) > this.addYearsToDate(this.higherEarnerDOB, 70)))) {
+        return `The higher earner should file between the ages of 62 and 70 years old.`;
+      }
+      return true
+    },
+    lowerEarnerFileDateRule(date) {
+      if (!date || (this.add1HourToDate(new Date(date)) < this.addYearsToDate(this.lowerEarnerDOB, 62)) || (new Date(date) > this.addYearsToDate(this.lowerEarnerDOB, 70))) {
+        return `The lower earner should file between the ages of 62 and 70 years old.`;
+      }
+      return true
     }
   },
 };
