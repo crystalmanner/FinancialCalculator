@@ -30,11 +30,14 @@
             <v-row>
               <v-col cols="12" lg="6" md="6" sm="12">
                 <h4>Current Portfolio</h4>
-                <v-text-field v-model.number="currentAveragePortfolioExpenseRate"
-                  :rules="[$numberGreaterThanNegativeRule]" label="Average Portfolio Expense" suffix="%"
-                  hint="Will your advisor increase this fee?" dense></v-text-field>
 
-
+                <div class="text-field-label">
+                  <a href="https://www.carrolladvisory.com/expense-ratio-calculator/" class="ml-2" target="_blank">Average
+                    Portfolio Expense</a>
+                  <v-text-field v-model.number="currentAveragePortfolioExpenseRate"
+                    :rules="[$numberGreaterThanNegativeRule]" suffix="%" hint="Will your advisor increase this fee?"
+                    dense></v-text-field>
+                </div>
                 <v-radio-group v-model="currentFeeOption">
                   <v-radio label="Advisory Fee" value="advisoryFee"></v-radio>
                   <v-radio label="Flat Fee" value="flatFee"></v-radio>
@@ -52,9 +55,13 @@
               </v-col>
               <v-col cols="12" lg="6" md="6" sm="12">
                 <h4>Proposed Portfolio</h4>
-                <v-text-field v-model.number="proposedAveragePortfolioExpenseRate"
-                  :rules="[$numberGreaterThanNegativeRule]" label="Average Portfolio Expense" suffix="%"
-                  hint="Will your advisor increase this fee?" dense></v-text-field>
+                <div class="text-field-label">
+                  <a href="https://www.carrolladvisory.com/expense-ratio-calculator/" class="ml-2" target="_blank">Average
+                    Portfolio Expense</a>
+                  <v-text-field v-model.number="proposedAveragePortfolioExpenseRate"
+                    :rules="[$numberGreaterThanNegativeRule]" suffix="%" hint="Will your advisor increase this fee?"
+                    dense></v-text-field>
+                </div>
                 <v-radio-group v-model="proposedFeeOption">
                   <v-radio label="Advisory Fee" value="advisoryFee"></v-radio>
                   <v-radio label="Flat Fee" value="flatFee"></v-radio>
@@ -658,5 +665,21 @@ export default {
 
 .portfolio-table table tbody tr td:nth-child(n+7):nth-child(-n+11) {
   background-color: #D6EBD5;
+}
+
+.text-field-label a {
+  font-size: 12px;
+  color: rgba(0, 0, 0, 0.87);
+  opacity: 0.6;
+  position: relative;
+  top: 26px;
+  left: 8px;
+  z-index: 999;
+}
+
+.text-field-label input {
+  padding-top: 24px;
+  padding-bottom: 8px;
+
 }
 </style>
