@@ -76,11 +76,10 @@
 
 <script>
 import Header from '@/components/Header.vue'
-import VueDatePicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css';
 
 export default {
-  components: { VueDatePicker, Header },
+  components: { Header },
   data() {
     return {
       validForm: true,

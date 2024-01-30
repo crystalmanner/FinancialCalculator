@@ -203,7 +203,6 @@
 
 <script>
 import Header from '@/components/Header.vue'
-import VueDatePicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css';
 import {
   Chart as ChartJS,
@@ -230,7 +229,7 @@ ChartJS.register(
 )
 
 export default {
-  components: { VueDatePicker, Line, Header },
+  components: { Line, Header },
   data() {
     return {
       validForm: true,
