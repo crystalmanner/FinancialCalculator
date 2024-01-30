@@ -174,7 +174,7 @@
                 </h4>
               </div>
             </div>
-            <div class="mt-4" style="max-width: 760px;">
+            <div class="mt-4" style="max-width: 760px; min-height: 400px;">
               <Line id="line-chart" width="600px" height="300px" :options="chartOptions" :data="chartData" />
             </div>
           </div>

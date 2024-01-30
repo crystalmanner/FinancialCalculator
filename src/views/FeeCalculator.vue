@@ -91,7 +91,7 @@
             </v-tabs>
             <v-window v-model="tab">
               <v-window-item :value="1">
-                <div style="max-width: 760px;">
+                <div style="max-width: 760px; min-height: 400px;">
                   <Line id="line-chart" width="600px" height="300px" :options="chartOptions" :data="chartData" />
                 </div>
               </v-window-item>
