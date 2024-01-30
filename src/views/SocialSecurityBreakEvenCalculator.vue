@@ -5,9 +5,10 @@
       <h2>Social Security Break Even Calculator</h2>
       <hr>
       <v-row class="pa-2 mt-4">
-        <v-col cols="12" lg="5" md="5" sm="12">
+        <v-col cols="12" lg="4" md="4" sm="12">
           <v-form v-model="validForm">
-            <v-text-field v-model="higherEarnerDOB" type="date" label="Date Of Birth" :rules="[validateInputDate]" />
+            <v-text-field v-model="dateOfBirth" type="date" label="Date Of Birth"
+              :rules="[validateInputDate, dateBiggerThan1943]" />
             <v-text-field class="mt-2" v-model="formattedBenefitFRAValue" :rules="[$textGreaterThanNegativeRule]"
               label="Benefit at Full Retirement Age" type="text" prefix="$" @blur="formatBenefitFRAValue"
               @input="stripBenefitFRAValueFormatting" dense></v-text-field>
@@ -55,13 +56,24 @@
             <v-slider v-model="averageAnnualCola" :min="0" :max="10" :step="0.5" color="primary"></v-slider>
             <div class="d-flex">
               <v-spacer></v-spacer>
-              <v-btn color="primary" :disabled="!validForm || !validFillingAges">Calculate</v-btn>
+              <v-btn color="primary" :disabled="!validForm || !validFillingAges" @click="calculate">Calculate</v-btn>
             </div>
           </v-form>
         </v-col>
-        <v-col cols="12" lg="7" md="7" sm="12">
+        <v-col cols="12" lg="8" md="8" sm="12">
           <div v-if="validForm">
+            <div class="px-8 py-4 ml-auto breakEvenAge">
+              <div class="bigSize">
+                Your Break Even Age
+              </div>
+              <div class="smallSize">
+                {{ breakEvenAge }}
+              </div>
+            </div>
 
+            <div class="mt-4" style="max-width: 760px; min-height: 400px;">
+              <Line id="line-chart" width="760px" height="400px" :options="chartOptions" :data="chartData" />
+            </div>
           </div>
           <div v-else class="mt-2 text-center">
             <h3 class="text-red-accent-2">Please input valid values.</h3>
@@ -107,14 +119,14 @@ export default {
   data() {
     return {
       validForm: true,
-      higherEarnerDOB: "1960-01-01",
-      benefitFRAValue: 3000,
-      formattedBenefitFRAValue: '3,000',
-      earlyYear: 64,
+      dateOfBirth: "1960-01-02",
+      benefitFRAValue: 1200,
+      formattedBenefitFRAValue: '1,200',
+      earlyYear: 62,
       earlyMonth: 0,
-      laterYear: 68,
+      laterYear: 70,
       laterMonth: 0,
-      averageAnnualCola: 2,
+      averageAnnualCola: 3,
       chartOptions: {
         responsive: true,
         lineTension: 1,
@@ -143,7 +155,7 @@ export default {
           {
             label: "Early",
             data: [],
-            backgroundColor: "rgba(0,112,192,.6)",
+            backgroundColor: "rgba(176,0,0,.6)",
             borderColor: "#B00000",
             borderWidth: 1,
             fill: false,
@@ -151,13 +163,14 @@ export default {
           {
             label: "Late",
             data: [],
-            backgroundColor: "rgba(0,176,80,.6)",
-            borderColor: "#1C4B5A",
+            backgroundColor: "rgba(28,176,80,.6)",
+            borderColor: "#1CB050",
             borderWidth: 1,
             fill: false,
           },
         ],
       },
+      breakEvenAge: '',
     }
   },
   watch: {
@@ -174,7 +187,101 @@ export default {
   },
   methods: {
     calculate() {
+      console.log("---calculate----");
+      let fullRetireMonths = 0;
+      if (new Date(this.dateOfBirth) > new Date('01/01/1960')) {
+        // 67 years and 0 month
+        fullRetireMonths = 67 * 12;
+      } else if (new Date(this.dateOfBirth) > new Date('01/01/1959')) {
+        fullRetireMonths = 66 * 12 + 10;
+      } else if (new Date(this.dateOfBirth) > new Date('01/01/1958')) {
+        fullRetireMonths = 66 * 12 + 8;
+      } else if (new Date(this.dateOfBirth) > new Date('01/01/1957')) {
+        fullRetireMonths = 66 * 12 + 6;
+      } else if (new Date(this.dateOfBirth) > new Date('01/01/1956')) {
+        fullRetireMonths = 66 * 12 + 4;
+      } else if (new Date(this.dateOfBirth) > new Date('01/01/1955')) {
+        fullRetireMonths = 66 * 12 + 2;
+      } else {
+        fullRetireMonths = 66 * 12;
+      }
+      console.log(this.getBenefit(fullRetireMonths, this.earlyYear * 12 + this.earlyMonth))
+      console.log(this.getBenefit(fullRetireMonths, this.laterYear * 12 + this.laterMonth))
+      let chartData = {
+        labels: [],
+        datasets: [
+          {
+            label: "Early",
+            data: [],
+            backgroundColor: "rgba(176,0,0,.6)",
+            borderColor: "#B00000",
+            borderWidth: 1,
+            fill: false,
+          },
+          {
+            label: "Late",
+            data: [],
+            backgroundColor: "rgba(28,176,80,.6)",
+            borderColor: "#1CB050",
+            borderWidth: 1,
+            fill: false,
+          },
+        ],
+      }
 
+      let monthlyEarly = this.getBenefit(fullRetireMonths, this.earlyYear * 12 + this.earlyMonth)
+      // let monthlyLater = this.getBenefit(fullRetireMonths, this.laterYear * 12 + this.laterMonth)
+      let monthlyLater = 1885
+
+      let previousEarlyCumulative = 0
+      let previousLaterCumulative = 0
+      this.breakEvenAge = ''
+      for (let i = this.earlyYear * 12 + this.earlyMonth; i <= 100 * 12 + 11; i++) {
+        chartData.labels.push(parseInt(i / 12) + 'Y' + parseInt(i % 12) + 'M')
+        previousEarlyCumulative = previousEarlyCumulative + monthlyEarly
+        chartData.datasets[0].data.push(parseInt(previousEarlyCumulative));
+
+        if (i % 12 === 11) {
+          monthlyEarly = this.customRound(monthlyEarly * (100 + this.averageAnnualCola) / 100);
+        }
+        if (i < this.laterYear * 12 + this.laterMonth) {
+          previousLaterCumulative = 0
+        } else {
+          previousLaterCumulative = previousLaterCumulative + monthlyLater
+          if (i % 12 === 11) {
+            monthlyLater = this.customRound(monthlyLater * (100 + this.averageAnnualCola) / 100);
+          }
+        }
+        console.log(previousLaterCumulative, "----previousLaterCumulative----")
+        chartData.datasets[1].data.push(parseInt(previousLaterCumulative));
+        if (!this.breakEvenAge && (previousLaterCumulative > previousEarlyCumulative)) {
+          this.breakEvenAge = parseInt(i / 12) + ' years ' + parseInt(i % 12) + ' months'
+        }
+      }
+      this.chartData = chartData
+    },
+
+    customRound(value) {
+      const decimalPart = value - Math.floor(value);
+      if (decimalPart >= 0.5) {
+        // If decimal part is greater than or equal to 0.5, use Math.ceil()
+        return Math.ceil(value);
+      } else {
+        // If decimal part is less than 0.5, use Math.floor()
+        return Math.floor(value);
+      }
+    },
+    getBenefit(fullRetireMonths, retiredMonths) {
+      if (fullRetireMonths > retiredMonths) {
+        if ((fullRetireMonths - retiredMonths) > 36) {
+          return this.benefitFRAValue * (100 - 36 * 5 / 9 - (fullRetireMonths - retiredMonths - 36) * 5 / 12) / 100;
+        } else {
+          return this.benefitFRAValue * (100 - (fullRetireMonths - retiredMonths) * 5 / 9) / 100;
+        }
+      } else {
+        retiredMonths = Math.min(retiredMonths, 70 * 12);
+        return this.benefitFRAValue * (100 + (retiredMonths - fullRetireMonths) * 2 / 3) / 100;
+      }
     },
     formatBenefitFRAValue() {
       // When the user leaves the field, format the number with commas
@@ -357,7 +464,13 @@ export default {
       if (parseInt(event.target.value) > 11) {
         this.laterMonth = 11
       }
-    }
+    },
+    dateBiggerThan1943(date) {
+      if (!date || (new Date(date) < new Date('1943-01-02'))) {
+        return `Please choose a date that is after January 1, 1943.`; // Validation fails
+      }
+      return true; // Validation passes
+    },
   },
 };
 </script>
@@ -374,5 +487,39 @@ export default {
 .small-text {
   font-size: 13px;
   font-weight: 700;
+}
+
+.breakEvenAge {
+  background-color: #003546;
+  width: fit-content;
+  color: white;
+  text-align: center;
+  border-radius: 6px;
+  position: relative;
+  border: 1px solid #003546;
+
+}
+
+.breakEvenAge::after {
+  content: '';
+  position: absolute;
+  left: 32px;
+  bottom: -10px;
+  /* Adjust this to move the arrow up or down */
+  width: 0;
+  height: 0;
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+  border-top: 10px solid #003546;
+  /* Same color as the div's background */
+  border-bottom: 0;
+}
+
+.breakEvenAge .bigSize {
+  font-size: 26px;
+}
+
+.breakEvenAge .smallSize {
+  font-size: 20px;
 }
 </style>
