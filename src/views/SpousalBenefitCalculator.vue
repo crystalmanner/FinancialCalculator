@@ -319,9 +319,8 @@ export default {
     },
     getMonthOffset(startDate, endDate) {
       // Calculate the difference in months
-      const months = (endDate.getFullYear() - startDate.getFullYear()) * 12 +
-        (endDate.getMonth() - startDate.getMonth());
-
+      const months = (endDate.getUTCFullYear() - startDate.getUTCFullYear()) * 12 +
+        (endDate.getUTCMonth() - startDate.getUTCMonth());
       return months;
     },
     getMaxDate(date1, date2) {
