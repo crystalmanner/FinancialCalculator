@@ -187,7 +187,6 @@ export default {
   },
   methods: {
     calculate() {
-      console.log("---calculate----");
       let fullRetireMonths = 0;
       if (new Date(this.dateOfBirth) > new Date('01/01/1960')) {
         // 67 years and 0 month
@@ -230,8 +229,7 @@ export default {
       }
 
       let monthlyEarly = this.getBenefit(fullRetireMonths, this.earlyYear * 12 + this.earlyMonth)
-      // let monthlyLater = this.getBenefit(fullRetireMonths, this.laterYear * 12 + this.laterMonth)
-      let monthlyLater = 1885
+      let monthlyLater = this.getBenefit(fullRetireMonths, this.laterYear * 12 + this.laterMonth)
 
       let previousEarlyCumulative = 0
       let previousLaterCumulative = 0
@@ -246,13 +244,13 @@ export default {
         }
         if (i < this.laterYear * 12 + this.laterMonth) {
           previousLaterCumulative = 0
+
         } else {
           previousLaterCumulative = previousLaterCumulative + monthlyLater
-          if (i % 12 === 11) {
-            monthlyLater = this.customRound(monthlyLater * (100 + this.averageAnnualCola) / 100);
-          }
         }
-        console.log(previousLaterCumulative, "----previousLaterCumulative----")
+        if (i % 12 === 11) {
+          monthlyLater = this.customRound(monthlyLater * (100 + this.averageAnnualCola) / 100);
+        }
         chartData.datasets[1].data.push(parseInt(previousLaterCumulative));
         if (!this.breakEvenAge && (previousLaterCumulative > previousEarlyCumulative)) {
           this.breakEvenAge = parseInt(i / 12) + ' years ' + parseInt(i % 12) + ' months'
