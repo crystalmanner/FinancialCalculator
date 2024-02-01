@@ -54,10 +54,10 @@
                 </v-tooltip>
               </p>
               <v-text-field v-model.number="averageAnnualCola" @blur="formatAverageAnnualCola" suffix="%"
-                dense></v-text-field>
+                :rules="[$numberGreaterThanNegativeRule, numberSmallerThan10]" dense></v-text-field>
             </div>
 
-            <v-slider v-model="averageAnnualCola" :min="0" :max="10" :step="0.5" color="primary"></v-slider>
+            <v-slider v-model="averageAnnualCola" :min="0" :max="10" :step="0.5" color="primary" class="mt-1"></v-slider>
           </v-form>
         </v-col>
         <v-col cols="12" lg="8" md="8" sm="12">
@@ -310,6 +310,8 @@ export default {
       let previousEarlyCumulative = 0
       let previousLaterCumulative = 0
       this.breakEvenAge = ''
+      let averageAnnualCola = this.averageAnnualCola ? parseFloat(this.averageAnnualCola) : 0
+
       for (let i = this.earlyYear * 12 + this.earlyMonth; i <= 100 * 12 + 11; i++) {
         chartData.labels.push(parseInt(i / 12) + 'Y' + parseInt(i % 12) + 'M')
         previousEarlyCumulative = previousEarlyCumulative + monthlyEarly
@@ -337,8 +339,9 @@ export default {
           'laterCumulative': this.$formatNumberWithCommas(this.customRound(previousLaterCumulative)),
         })
         if (i % 12 === 11) {
-          monthlyEarly = this.customRound(monthlyEarly * (100 + this.averageAnnualCola) / 100);
-          monthlyLater = this.customRound(monthlyLater * (100 + this.averageAnnualCola) / 100);
+
+          monthlyEarly = this.customRound(monthlyEarly * (100 + averageAnnualCola) / 100);
+          monthlyLater = this.customRound(monthlyLater * (100 + averageAnnualCola) / 100);
 
         }
       }
@@ -529,15 +532,16 @@ export default {
       }
     },
     formatAverageAnnualCola() {
-      if (!this.averageAnnualCola || isNaN(parseFloat(this.averageAnnualCola))) {
-        this.averageAnnualCola = 0
+      if (!this.averageAnnualCola) {
+        return
+      }
+      if (isNaN(this.averageAnnualCola)) {
+        this.averageAnnualCola = ''
+        return
       }
       this.averageAnnualCola = parseFloat(this.averageAnnualCola).toFixed(2)
       if (this.averageAnnualCola < 0) {
         this.averageAnnualCola = 0
-      }
-      if (this.averageAnnualCola > 10) {
-        this.averageAnnualCola = 10
       }
     },
     validateInputDate(date) {
@@ -562,6 +566,13 @@ export default {
       }
       return true; // Validation passes
     },
+    numberSmallerThan10(value) {
+      const numericValue = parseFloat(value);
+      if (!isNaN(numericValue) && numericValue > 10) {
+        return `Average Annual Cola should not be greater than 10%.`; // Validation fails
+      }
+      return true; // Validation passes
+    }
   },
 };
 </script>
