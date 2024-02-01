@@ -6,7 +6,7 @@
       <hr>
       <v-row class="pa-2 mt-4">
         <v-col cols="12" lg="4" md="4" sm="12">
-          <v-form v-model="validForm">
+          <v-form v-model="validForm" ref="form">
             <v-text-field v-model="dateOfBirth" type="date" label="Date Of Birth"
               :rules="[validateInputDate, dateBiggerThan1943]" />
             <v-text-field class="mt-2" v-model="formattedBenefitFRAValue" :rules="[$textGreaterThanNegativeRule]"
@@ -25,20 +25,24 @@
             </p>
             <div class="d-flex align-center mt-4">
               <p class="big-text mr-2 mb-4">Early</p>
-              <v-btn density="compact" icon="mdi-minus" @click="minusEarly" class="mx-2 mb-4"></v-btn>
+              <v-btn density="compact" icon="mdi-minus" @click="minusEarly" class="mx-2 mb-4"
+                :disabled="(earlyYear === 62) && (earlyMonth === 0)"></v-btn>
               <v-text-field label="Year" v-model.number="earlyYear" @blur="formatEarlyYear" class="mx-2"></v-text-field>
               <v-text-field label="Month" v-model.number="earlyMonth" @blur="formatEarlyMonth" @input="inputEarlyMonth"
                 class="mx-2"></v-text-field>
-              <v-btn density="compact" icon="mdi-plus" @click="plusEarly" class="mx-2 mb-4"></v-btn>
+              <v-btn density="compact" icon="mdi-plus" @click="plusEarly" class="mx-2 mb-4"
+                :disabled="(earlyYear === 70) && (earlyMonth === 0)"></v-btn>
             </div>
 
             <div class="d-flex align-center mt-4">
               <p class="big-text mr-2 mb-4">Later</p>
-              <v-btn density="compact" icon="mdi-minus" @click="minusLater" class="mx-2 mb-4"></v-btn>
+              <v-btn density="compact" icon="mdi-minus" @click="minusLater" class="mx-2 mb-4"
+                :disabled="(laterYear === 62) && (laterMonth === 0)"></v-btn>
               <v-text-field label="Year" v-model.number="laterYear" @blur="formatLaterYear" class="mx-2"></v-text-field>
               <v-text-field label="Month" v-model.number="laterMonth" @blur="formatLaterMonth" @input="inputLaterMonth"
                 class="mx-4"></v-text-field>
-              <v-btn density="compact" icon="mdi-plus" @click="plusLater" class="mx-2 mb-4"></v-btn>
+              <v-btn density="compact" icon="mdi-plus" @click="plusLater" class="mx-2 mb-4"
+                :disabled="(laterYear === 70) && (laterMonth === 0)"></v-btn>
             </div>
             <div class="d-flex align-center">
               <p class="big-text mr-2 mb-4">Average Annual Cola&nbsp;
@@ -54,14 +58,10 @@
             </div>
 
             <v-slider v-model="averageAnnualCola" :min="0" :max="10" :step="0.5" color="primary"></v-slider>
-            <div class="d-flex">
-              <v-spacer></v-spacer>
-              <v-btn color="primary" :disabled="!validForm || !validFillingAges" @click="calculate">Calculate</v-btn>
-            </div>
           </v-form>
         </v-col>
         <v-col cols="12" lg="8" md="8" sm="12">
-          <div v-if="validForm">
+          <div v-if="validForm && validFillingAges">
             <div class="px-8 py-4 ml-auto breakEvenAge">
               <div class="bigSize">
                 Your Break Even Age
@@ -77,6 +77,15 @@
           </div>
           <div v-else class="mt-2 text-center">
             <h3 class="text-red-accent-2">Please input valid values.</h3>
+          </div>
+        </v-col>
+      </v-row>
+      <v-row class="pa-2 mt-4">
+        <v-col cols="12" lg="12" md="12" sm="12">
+          <div v-if="validForm && validFillingAges">
+            <v-data-table :headers="headers" :items="tableData" :items-per-page="-1" :items-per-page-options="pageOptions"
+              class="breakeven-table">
+            </v-data-table>
           </div>
         </v-col>
       </v-row>
@@ -155,29 +164,95 @@ export default {
           {
             label: "Early",
             data: [],
-            backgroundColor: "rgba(176,0,0,.6)",
-            borderColor: "#B00000",
+            backgroundColor: "rgba(0,112,192,.6)",
+            borderColor: "#4897FF",
             borderWidth: 1,
             fill: false,
           },
           {
             label: "Late",
             data: [],
-            backgroundColor: "rgba(28,176,80,.6)",
-            borderColor: "#1CB050",
+            backgroundColor: "rgba(0,176,80,.6)",
+            borderColor: "#88DD9B",
             borderWidth: 1,
             fill: false,
           },
         ],
       },
       breakEvenAge: '',
+      pageOptions: [
+        { value: 10, title: '10' },
+        { value: 25, title: '25' },
+        { value: 50, title: '50' },
+        { value: -1, title: '$vuetify.dataFooter.itemsPerPageAll' }
+      ],
+      tableData: [],
     }
   },
   watch: {
+    dateOfBirth() {
+      this.calculate();
+    },
+    benefitFRAValue() {
+      this.calculate();
+    },
+    earlyYear() {
+      this.calculate();
+    },
+    earlyMonth() {
+      this.calculate();
+    },
+    laterYear() {
+      this.calculate();
+    },
+    laterMonth() {
+      this.calculate();
+    },
+    averageAnnualCola() {
+      this.calculate();
+    },
   },
   computed: {
     validFillingAges() {
       return !!((this.laterYear * 12 + this.laterMonth) >= (this.earlyYear * 12 + this.earlyMonth))
+    },
+    headers() {
+      return [
+        {
+          title: '',
+          children: [
+            {
+              title: 'Date',
+              align: 'start',
+              value: 'date',
+            }
+          ]
+        },
+        {
+          title: 'AGE',
+          align: 'center',
+          children: [
+            { title: 'Year', value: 'year', align: 'center', },
+            { title: 'Month', value: 'month', align: 'center', },
+          ]
+        },
+        {
+          title: 'FILING AT ' + this.earlyYear,
+          align: 'center',
+          children: [
+            { title: 'Monthly', value: 'earlyMonthly', align: 'end' },
+            { title: 'Cumulative', value: 'earlyCumulative', align: 'end' },
+          ]
+        },
+        {
+          title: 'FILING AT ' + this.laterYear,
+          align: 'center',
+          children: [
+            { title: 'Monthly', value: 'laterMonthly', align: 'end' },
+            { title: 'Cumulative', value: 'laterCumulative', align: 'end' },
+          ]
+        },
+      ]
     },
   },
   created() {
@@ -187,6 +262,9 @@ export default {
   },
   methods: {
     calculate() {
+      if (!this.$refs.form.validate() || !this.validFillingAges) {
+        return
+      }
       let fullRetireMonths = 0;
       if (new Date(this.dateOfBirth) > new Date('01/01/1960')) {
         // 67 years and 0 month
@@ -204,30 +282,28 @@ export default {
       } else {
         fullRetireMonths = 66 * 12;
       }
-      console.log(this.getBenefit(fullRetireMonths, this.earlyYear * 12 + this.earlyMonth))
-      console.log(this.getBenefit(fullRetireMonths, this.laterYear * 12 + this.laterMonth))
       let chartData = {
         labels: [],
         datasets: [
           {
             label: "Early",
             data: [],
-            backgroundColor: "rgba(176,0,0,.6)",
-            borderColor: "#B00000",
+            backgroundColor: "rgba(0,112,192,.6)",
+            borderColor: "#4897FF",
             borderWidth: 1,
             fill: false,
           },
           {
             label: "Late",
             data: [],
-            backgroundColor: "rgba(28,176,80,.6)",
-            borderColor: "#1CB050",
+            backgroundColor: "rgba(0,176,80,.6)",
+            borderColor: "#88DD9B",
             borderWidth: 1,
             fill: false,
           },
         ],
       }
-
+      this.tableData = []
       let monthlyEarly = this.getBenefit(fullRetireMonths, this.earlyYear * 12 + this.earlyMonth)
       let monthlyLater = this.getBenefit(fullRetireMonths, this.laterYear * 12 + this.laterMonth)
 
@@ -239,24 +315,41 @@ export default {
         previousEarlyCumulative = previousEarlyCumulative + monthlyEarly
         chartData.datasets[0].data.push(parseInt(previousEarlyCumulative));
 
-        if (i % 12 === 11) {
-          monthlyEarly = this.customRound(monthlyEarly * (100 + this.averageAnnualCola) / 100);
-        }
+
         if (i < this.laterYear * 12 + this.laterMonth) {
           previousLaterCumulative = 0
-
         } else {
           previousLaterCumulative = previousLaterCumulative + monthlyLater
         }
-        if (i % 12 === 11) {
-          monthlyLater = this.customRound(monthlyLater * (100 + this.averageAnnualCola) / 100);
-        }
+
         chartData.datasets[1].data.push(parseInt(previousLaterCumulative));
         if (!this.breakEvenAge && (previousLaterCumulative > previousEarlyCumulative)) {
           this.breakEvenAge = parseInt(i / 12) + ' years ' + parseInt(i % 12) + ' months'
         }
+
+        this.tableData.push({
+          'date': this.addMonthsToDate(this.dateOfBirth, i),
+          'year': parseInt(i / 12),
+          'month': parseInt(i % 12),
+          'earlyMonthly': this.$formatNumberWithCommas(this.customRound(monthlyEarly)),
+          'earlyCumulative': this.$formatNumberWithCommas(this.customRound(previousEarlyCumulative)),
+          'laterMonthly': this.$formatNumberWithCommas(this.customRound((i < this.laterYear * 12 + this.laterMonth) ? 0 : monthlyLater)),
+          'laterCumulative': this.$formatNumberWithCommas(this.customRound(previousLaterCumulative)),
+        })
+        if (i % 12 === 11) {
+          monthlyEarly = this.customRound(monthlyEarly * (100 + this.averageAnnualCola) / 100);
+          monthlyLater = this.customRound(monthlyLater * (100 + this.averageAnnualCola) / 100);
+
+        }
       }
       this.chartData = chartData
+    },
+
+    addMonthsToDate(dateString, monthsToAdd) {
+      let date = new Date(dateString);
+      date.setUTCDate(15);
+      date.setUTCMonth(date.getUTCMonth() + monthsToAdd);
+      return date.toLocaleString('en-US', { month: 'long', timeZone: 'UTC' }) + ' ' + date.getUTCFullYear();
     },
 
     customRound(value) {
@@ -519,5 +612,29 @@ export default {
 
 .breakEvenAge .smallSize {
   font-size: 20px;
+}
+
+.breakeven-table table thead tr:nth-child(1) th:nth-child(3) {
+  background-color: #4897FF;
+}
+
+.breakeven-table table thead tr:nth-child(1) th:nth-child(4) {
+  background-color: #88DD9B;
+}
+
+.breakeven-table table thead tr:nth-child(2) th:nth-child(n+4):nth-child(-n+5) {
+  background-color: #CEE1F2;
+}
+
+.breakeven-table table thead tr:nth-child(2) th:nth-child(n+6):nth-child(-n+7) {
+  background-color: #D6EBD5;
+}
+
+.breakeven-table table tbody tr td:nth-child(n+4):nth-child(-n+5) {
+  background-color: #CEE1F2;
+}
+
+.breakeven-table table tbody tr td:nth-child(n+6):nth-child(-n+7) {
+  background-color: #D6EBD5;
 }
 </style>

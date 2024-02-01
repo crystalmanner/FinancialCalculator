@@ -638,10 +638,6 @@ export default {
   width: 50%;
 }
 
-.current-header-style {
-  background-color: #4897FF;
-}
-
 .portfolio-table table thead tr:nth-child(1) th:nth-child(2) {
   background-color: #4897FF;
 }

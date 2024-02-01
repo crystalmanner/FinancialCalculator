@@ -329,7 +329,7 @@ export default {
     },
     addYearsToDate(date, yearsToAdd) {
       const newDate = new Date(date);
-      newDate.setFullYear(newDate.getFullYear() + yearsToAdd);
+      newDate.setFullYear(newDate.getUTCFullYear() + yearsToAdd);
       return newDate;
     },
     customRound(value) {
