@@ -129,14 +129,23 @@ export default {
   data() {
     return {
       validForm: true,
-      dateOfBirth: "1960-01-02",
       benefitFRAValue: 1200,
       formattedBenefitFRAValue: '1,200',
+
+      dateOfBirth: "1960-01-02",
       earlyYear: 62,
       earlyMonth: 0,
       laterYear: 70,
       laterMonth: 0,
       averageAnnualCola: 3,
+
+      // dateOfBirth: "1962-02-05",
+      // earlyYear: 64,
+      // earlyMonth: 2,
+      // laterYear: 68,
+      // laterMonth: 9,
+      // averageAnnualCola: 2,
+
       chartOptions: {
         responsive: true,
         lineTension: 1,
@@ -340,8 +349,8 @@ export default {
           'laterCumulative': this.$formatNumberWithCommas(this.customRound(previousLaterCumulative)),
         })
         if ((i + dateOfBirthMonth) % 12 === 11) {
-          monthlyEarly = this.customRound(monthlyEarly * (100 + averageAnnualCola) / 100);
-          monthlyLater = this.customRound(monthlyLater * (100 + averageAnnualCola) / 100);
+          monthlyEarly = monthlyEarly * (100 + averageAnnualCola) / 100;
+          monthlyLater = monthlyLater * (100 + averageAnnualCola) / 100;
         }
       }
       this.chartData = chartData
