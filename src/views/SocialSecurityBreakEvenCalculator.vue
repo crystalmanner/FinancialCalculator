@@ -305,14 +305,14 @@ export default {
         ],
       }
       this.tableData = []
-      let monthlyEarly = this.getBenefit(fullRetireMonths, this.earlyYear * 12 + this.earlyMonth)
-      let monthlyLater = this.getBenefit(fullRetireMonths, this.laterYear * 12 + this.laterMonth)
-
+      let monthlyEarly = this.customRound(this.getBenefit(fullRetireMonths, this.earlyYear * 12 + this.earlyMonth))
+      let monthlyLater = this.customRound(this.getBenefit(fullRetireMonths, this.laterYear * 12 + this.laterMonth))
       let previousEarlyCumulative = 0
       let previousLaterCumulative = 0
       this.breakEvenAge = ''
       let averageAnnualCola = this.averageAnnualCola ? parseFloat(this.averageAnnualCola) : 0
-
+      let dateOfBirth = new Date(this.dateOfBirth)
+      let dateOfBirthMonth = dateOfBirth.getUTCMonth()
       for (let i = this.earlyYear * 12 + this.earlyMonth; i <= 100 * 12 + 11; i++) {
         chartData.labels.push(parseInt(i / 12) + 'Y' + parseInt(i % 12) + 'M')
         previousEarlyCumulative = previousEarlyCumulative + monthlyEarly
@@ -339,11 +339,9 @@ export default {
           'laterMonthly': this.$formatNumberWithCommas(this.customRound((i < this.laterYear * 12 + this.laterMonth) ? 0 : monthlyLater)),
           'laterCumulative': this.$formatNumberWithCommas(this.customRound(previousLaterCumulative)),
         })
-        if (i % 12 === 11) {
-
+        if ((i + dateOfBirthMonth) % 12 === 11) {
           monthlyEarly = this.customRound(monthlyEarly * (100 + averageAnnualCola) / 100);
           monthlyLater = this.customRound(monthlyLater * (100 + averageAnnualCola) / 100);
-
         }
       }
       this.chartData = chartData
