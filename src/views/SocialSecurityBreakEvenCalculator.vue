@@ -62,11 +62,11 @@
         </v-col>
         <v-col cols="12" lg="8" md="8" sm="12">
           <div v-if="validForm && validFillingAges">
-            <div class="px-8 py-4 ml-auto breakEvenAge">
+            <div class="px-8 py-4 ml-auto breakEvenAge" style="max-width: 760px;">
               <div class="bigSize">
                 Your Break Even Age
               </div>
-              <div class="smallSize" style="max-width: 760px;">
+              <div class="smallSize">
                 {{ breakEvenAge }}
               </div>
             </div>
