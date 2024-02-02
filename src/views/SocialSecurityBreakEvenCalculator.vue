@@ -66,7 +66,7 @@
               <div class="bigSize">
                 Your Break Even Age
               </div>
-              <div class="smallSize">
+              <div class="smallSize" style="max-width: 760px;">
                 {{ breakEvenAge }}
               </div>
             </div>
