@@ -45,7 +45,7 @@
                 :disabled="(laterYear === 70) && (laterMonth === 0)"></v-btn>
             </div>
             <div class="d-flex align-center">
-              <p class="big-text mr-2 mb-4">Average Annual Cola&nbsp;
+              <p class="big-text mr-2 mb-4">Average Annual Increase&nbsp;
                 <v-tooltip location="top">
                   <template v-slot:activator="{ props }">
                     <v-icon icon="mdi-help-circle" class="cursor-pointer" size="md" v-bind="props" start />
@@ -53,11 +53,12 @@
                   <span>Enter the estimated annual cost of living increase to Social Security Benefits</span>
                 </v-tooltip>
               </p>
-              <v-text-field v-model.number="averageAnnualCola" @blur="formatAverageAnnualCola" suffix="%"
+              <v-text-field v-model.number="averageAnnualIncrease" @blur="formatAverageAnnualIncrease" suffix="%"
                 :rules="[$numberGreaterThanNegativeRule, numberSmallerThan10]" dense></v-text-field>
             </div>
 
-            <v-slider v-model="averageAnnualCola" :min="0" :max="10" :step="0.5" color="primary" class="mt-1"></v-slider>
+            <v-slider v-model="averageAnnualIncrease" :min="0" :max="10" :step="0.5" color="primary"
+              class="mt-1"></v-slider>
           </v-form>
         </v-col>
         <v-col cols="12" lg="8" md="8" sm="12">
@@ -132,19 +133,19 @@ export default {
       benefitFRAValue: 1200,
       formattedBenefitFRAValue: '1,200',
 
-      dateOfBirth: "1960-01-02",
+      dateOfBirth: "1969-02-03",
       earlyYear: 62,
       earlyMonth: 0,
       laterYear: 70,
       laterMonth: 0,
-      averageAnnualCola: 3,
+      averageAnnualIncrease: 3,
 
       // dateOfBirth: "1962-02-05",
       // earlyYear: 64,
       // earlyMonth: 2,
       // laterYear: 68,
       // laterMonth: 9,
-      // averageAnnualCola: 2,
+      // averageAnnualIncrease: 2,
 
       chartOptions: {
         responsive: true,
@@ -218,7 +219,7 @@ export default {
     laterMonth() {
       this.calculate();
     },
-    averageAnnualCola() {
+    averageAnnualIncrease() {
       this.calculate();
     },
   },
@@ -314,15 +315,50 @@ export default {
         ],
       }
       this.tableData = []
-      let monthlyEarly = this.customRound(this.getBenefit(fullRetireMonths, this.earlyYear * 12 + this.earlyMonth))
-      let monthlyLater = this.customRound(this.getBenefit(fullRetireMonths, this.laterYear * 12 + this.laterMonth))
+      let dateOfBirth = new Date(this.dateOfBirth)
+      let dateOfBirthMonth = dateOfBirth.getUTCMonth()
+      let startMonths = 0
+      let fraBenefitPBA = this.benefitFRAValue
+      let monthlyEarly = 0
+      let monthlyLater = 0
+      let averageAnnualIncrease = this.averageAnnualIncrease ? parseFloat(this.averageAnnualIncrease) : 0
+
+      // get Early and Later start benefits
+      if (this.getMonthOffset(new Date(this.dateOfBirth), new Date()) < this.earlyYear * 12 + this.earlyMonth) {
+        // sheet 2
+        startMonths = this.earlyYear * 12 + this.earlyMonth
+        for (let i = this.getMonthOffset(new Date(this.dateOfBirth), new Date()); i <= this.laterYear * 12 + this.laterMonth; i++) {
+          if (i === this.earlyYear * 12 + this.earlyMonth) {
+            monthlyEarly = this.customRound(this.getBenefit(fraBenefitPBA, fullRetireMonths, this.earlyYear * 12 + this.earlyMonth))
+          }
+          if (i === this.laterYear * 12 + this.laterMonth) {
+            monthlyLater = this.customRound(this.getBenefit(fraBenefitPBA, fullRetireMonths, this.laterYear * 12 + this.laterMonth))
+          }
+          if ((i + dateOfBirthMonth) % 12 === 0) {
+            fraBenefitPBA = fraBenefitPBA * (100 + averageAnnualIncrease) / 100;
+          }
+        }
+      } else {
+        // sheet 3
+        startMonths = this.getMonthOffset(new Date(this.dateOfBirth), new Date())
+        monthlyEarly = this.customRound(this.getBenefit(fraBenefitPBA, fullRetireMonths, this.earlyYear * 12 + this.earlyMonth))
+        for (let i = this.getMonthOffset(new Date(this.dateOfBirth), new Date()) + 1; i <= this.laterYear * 12 + this.laterMonth; i++) {
+          if ((i + dateOfBirthMonth) % 12 === 0) {
+            fraBenefitPBA = fraBenefitPBA * (100 + averageAnnualIncrease) / 100;
+          }
+        }
+        monthlyLater = this.customRound(this.getBenefit(fraBenefitPBA, fullRetireMonths, this.laterYear * 12 + this.laterMonth))
+      }
+
+      console.log(monthlyEarly, "----monthlyEarly---")
+      console.log(monthlyLater, "----monthlyLater---")
+
+
       let previousEarlyCumulative = 0
       let previousLaterCumulative = 0
       this.breakEvenAge = ''
-      let averageAnnualCola = this.averageAnnualCola ? parseFloat(this.averageAnnualCola) : 0
-      let dateOfBirth = new Date(this.dateOfBirth)
-      let dateOfBirthMonth = dateOfBirth.getUTCMonth()
-      for (let i = this.earlyYear * 12 + this.earlyMonth; i <= 100 * 12 + 11; i++) {
+
+      for (let i = startMonths; i <= 100 * 12; i++) {
         chartData.labels.push(parseInt(i / 12) + 'Y' + parseInt(i % 12) + 'M')
         previousEarlyCumulative = previousEarlyCumulative + monthlyEarly
         chartData.datasets[0].data.push(parseInt(previousEarlyCumulative));
@@ -349,11 +385,18 @@ export default {
           'laterCumulative': this.$formatNumberWithCommas(this.customRound(previousLaterCumulative)),
         })
         if ((i + dateOfBirthMonth) % 12 === 11) {
-          monthlyEarly = monthlyEarly * (100 + averageAnnualCola) / 100;
-          monthlyLater = monthlyLater * (100 + averageAnnualCola) / 100;
+          monthlyEarly = monthlyEarly * (100 + averageAnnualIncrease) / 100;
+          monthlyLater = monthlyLater * (100 + averageAnnualIncrease) / 100;
         }
       }
       this.chartData = chartData
+    },
+
+    getMonthOffset(startDate, endDate) {
+      // Calculate the difference in months
+      const months = (endDate.getUTCFullYear() - startDate.getUTCFullYear()) * 12 +
+        (endDate.getUTCMonth() - startDate.getUTCMonth());
+      return months;
     },
 
     addMonthsToDate(dateString, monthsToAdd) {
@@ -373,16 +416,16 @@ export default {
         return Math.floor(value);
       }
     },
-    getBenefit(fullRetireMonths, retiredMonths) {
+    getBenefit(fraBenefit, fullRetireMonths, retiredMonths) {
       if (fullRetireMonths > retiredMonths) {
         if ((fullRetireMonths - retiredMonths) > 36) {
-          return this.benefitFRAValue * (100 - 36 * 5 / 9 - (fullRetireMonths - retiredMonths - 36) * 5 / 12) / 100;
+          return fraBenefit * (100 - 36 * 5 / 9 - (fullRetireMonths - retiredMonths - 36) * 5 / 12) / 100;
         } else {
-          return this.benefitFRAValue * (100 - (fullRetireMonths - retiredMonths) * 5 / 9) / 100;
+          return fraBenefit * (100 - (fullRetireMonths - retiredMonths) * 5 / 9) / 100;
         }
       } else {
         retiredMonths = Math.min(retiredMonths, 70 * 12);
-        return this.benefitFRAValue * (100 + (retiredMonths - fullRetireMonths) * 2 / 3) / 100;
+        return fraBenefit * (100 + (retiredMonths - fullRetireMonths) * 2 / 3) / 100;
       }
     },
     formatBenefitFRAValue() {
@@ -539,17 +582,17 @@ export default {
         this.laterMonth = 11
       }
     },
-    formatAverageAnnualCola() {
-      if (!this.averageAnnualCola) {
+    formatAverageAnnualIncrease() {
+      if (!this.averageAnnualIncrease) {
         return
       }
-      if (isNaN(this.averageAnnualCola)) {
-        this.averageAnnualCola = ''
+      if (isNaN(this.averageAnnualIncrease)) {
+        this.averageAnnualIncrease = ''
         return
       }
-      this.averageAnnualCola = parseFloat(this.averageAnnualCola).toFixed(2)
-      if (this.averageAnnualCola < 0) {
-        this.averageAnnualCola = 0
+      this.averageAnnualIncrease = parseFloat(this.averageAnnualIncrease).toFixed(2)
+      if (this.averageAnnualIncrease < 0) {
+        this.averageAnnualIncrease = 0
       }
     },
     validateInputDate(date) {
@@ -577,7 +620,7 @@ export default {
     numberSmallerThan10(value) {
       const numericValue = parseFloat(value);
       if (!isNaN(numericValue) && numericValue > 10) {
-        return `Average Annual Cola should not be greater than 10%.`; // Validation fails
+        return `Average Annual Increase should not be greater than 10%.`; // Validation fails
       }
       return true; // Validation passes
     }
