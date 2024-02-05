@@ -5,7 +5,7 @@
       <h2>Social Security Break Even Calculator</h2>
       <hr>
       <v-row class="pa-2 mt-4">
-        <v-col cols="12" lg="4" md="4" sm="12">
+        <v-col cols="12" lg="5" md="5" sm="12">
           <v-form v-model="validForm" ref="form">
             <v-text-field v-model="dateOfBirth" type="date" label="Date Of Birth"
               :rules="[validateInputDate, dateBiggerThan1943]" />
@@ -45,7 +45,7 @@
                 :disabled="(laterYear === 70) && (laterMonth === 0)"></v-btn>
             </div>
             <div class="d-flex align-center">
-              <p class="big-text mr-2 mb-4">Average Annual Increase&nbsp;
+              <p class="big-text mb-4">Average Annual Increase&nbsp;
                 <v-tooltip location="top">
                   <template v-slot:activator="{ props }">
                     <v-icon icon="mdi-help-circle" class="cursor-pointer" size="md" v-bind="props" start />
@@ -61,7 +61,7 @@
               class="mt-1"></v-slider>
           </v-form>
         </v-col>
-        <v-col cols="12" lg="8" md="8" sm="12">
+        <v-col cols="12" lg="7" md="7" sm="12">
           <div v-if="validForm && validFillingAges">
             <div style="max-width: 760px;">
               <div class="px-8 py-4 ml-auto breakEvenAge">
@@ -634,7 +634,7 @@ export default {
 
 <style>
 .big-text {
-  font-size: 22px;
+  font-size: 20px;
 }
 
 .medium-text {
