@@ -329,8 +329,6 @@ export default {
       let monthlyEarly = 0
       let monthlyLater = 0
       let averageAnnualIncrease = this.averageAnnualIncrease ? parseFloat(this.averageAnnualIncrease) : 0
-      console.log(this.getMonthOffset(new Date(this.dateOfBirth), new Date()), "------this.getMonthOffset(new Date(this.dateOfBirth), new Date())----")
-      console.log(this.earlyYear * 12 + this.earlyMonth, "----this.earlyYear * 12 + this.earlyMonth---")
       // get Early and Later start benefits
       if (this.getMonthOffset(new Date(this.dateOfBirth), new Date()) < this.earlyYear * 12 + this.earlyMonth) {
         // sheet 2
@@ -338,22 +336,18 @@ export default {
         for (let i = this.getMonthOffset(new Date(this.dateOfBirth), new Date()); i <= this.laterYear * 12 + this.laterMonth; i++) {
           if (i === this.earlyYear * 12 + this.earlyMonth) {
             monthlyEarly = this.customRound(this.getBenefit(fraBenefitPBA, fullRetireMonths, this.earlyYear * 12 + this.earlyMonth))
-            // console.log(monthlyEarly, "--------monthlyEarly------------")
           }
           if (i === this.laterYear * 12 + this.laterMonth) {
             monthlyLater = this.customRound(this.getBenefit(fraBenefitPBA, fullRetireMonths, this.laterYear * 12 + this.laterMonth))
-            console.log(monthlyLater, "--------monthlyLater------------")
           }
-          // console.log(this.customRound(fraBenefitPBA), parseInt(i / 12), i % 12, "------fraBenefitPBA----------")
           if ((i + dateOfBirthMonth) % 12 === 0) {
             fraBenefitPBA = fraBenefitPBA * (100 + averageAnnualIncrease) / 100;
-            console.log("----will changed!-----------")
           }
         }
       } else {
         // sheet 3
         startMonths = this.getMonthOffset(new Date(this.dateOfBirth), new Date())
-        monthlyEarly = this.customRound(this.getBenefit(fraBenefitPBA, fullRetireMonths, this.earlyYear * 12 + this.earlyMonth))
+        monthlyEarly = this.customRound(this.getBenefit(fraBenefitPBA, fullRetireMonths, startMonths))
         for (let i = this.getMonthOffset(new Date(this.dateOfBirth), new Date()) + 1; i <= this.laterYear * 12 + this.laterMonth; i++) {
           if ((i + dateOfBirthMonth) % 12 === 0) {
             fraBenefitPBA = fraBenefitPBA * (100 + averageAnnualIncrease) / 100;
@@ -361,10 +355,6 @@ export default {
         }
         monthlyLater = this.customRound(this.getBenefit(fraBenefitPBA, fullRetireMonths, this.laterYear * 12 + this.laterMonth))
       }
-
-      // console.log(monthlyEarly, "----monthlyEarly---")
-      // console.log(monthlyLater, "----monthlyLater---")
-
 
       let previousEarlyCumulative = 0
       let previousLaterCumulative = 0
