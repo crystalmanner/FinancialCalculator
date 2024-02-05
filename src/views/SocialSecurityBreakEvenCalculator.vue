@@ -130,8 +130,11 @@ export default {
   data() {
     return {
       validForm: true,
-      benefitFRAValue: 1200,
-      formattedBenefitFRAValue: '1,200',
+      // benefitFRAValue: 1200,
+      // formattedBenefitFRAValue: '1,200',
+      benefitFRAValue: 2860,
+      formattedBenefitFRAValue: '2,860',
+
 
       // dateOfBirth: "1969-02-03",
       // earlyYear: 62,
@@ -142,7 +145,7 @@ export default {
 
       dateOfBirth: "1969-02-03",
       earlyYear: 62,
-      earlyMonth: 0,
+      earlyMonth: 11,
       laterYear: 70,
       laterMonth: 0,
       averageAnnualIncrease: 2,
@@ -334,15 +337,19 @@ export default {
         // sheet 2
         startMonths = this.earlyYear * 12 + this.earlyMonth
         for (let i = this.getMonthOffset(new Date(this.dateOfBirth), new Date()); i <= this.laterYear * 12 + this.laterMonth; i++) {
+          if (((i + dateOfBirthMonth) % 12 === 0) && this.getMonthOffset(new Date(this.dateOfBirth), new Date())) {
+            fraBenefitPBA = fraBenefitPBA * (100 + averageAnnualIncrease) / 100;
+          }
           if (i === this.earlyYear * 12 + this.earlyMonth) {
+            console.log(fraBenefitPBA, "----fraBenefitPBA-----")
+            console.log(fullRetireMonths, "----fullRetireMonths-----")
+            console.log(this.earlyYear * 12 + this.earlyMonth, "----this.earlyYear * 12 + this.earlyMonth-----")
             monthlyEarly = this.customRound(this.getBenefit(fraBenefitPBA, fullRetireMonths, this.earlyYear * 12 + this.earlyMonth))
           }
           if (i === this.laterYear * 12 + this.laterMonth) {
             monthlyLater = this.customRound(this.getBenefit(fraBenefitPBA, fullRetireMonths, this.laterYear * 12 + this.laterMonth))
           }
-          if ((i + dateOfBirthMonth) % 12 === 0) {
-            fraBenefitPBA = fraBenefitPBA * (100 + averageAnnualIncrease) / 100;
-          }
+
         }
       } else {
         // sheet 3
