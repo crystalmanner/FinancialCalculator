@@ -258,6 +258,12 @@ export default {
           ]
         },
         {
+          title: '',
+          children: [
+            { title: 'FRA Benefit (PIA)', value: 'fraBenefit', align: 'center', },
+          ]
+        },
+        {
           title: 'FILING AT ' + this.earlyYear,
           align: 'center',
           children: [
@@ -332,6 +338,7 @@ export default {
       let monthlyEarly = 0
       let monthlyLater = 0
       let averageAnnualIncrease = this.averageAnnualIncrease ? parseFloat(this.averageAnnualIncrease) : 0
+      let tableFRABenefitPBA = fraBenefitPBA
       // get Early and Later start benefits
       if (this.getMonthOffset(new Date(this.dateOfBirth), new Date()) < this.earlyYear * 12 + this.earlyMonth) {
         // sheet 2
@@ -341,19 +348,17 @@ export default {
             fraBenefitPBA = fraBenefitPBA * (100 + averageAnnualIncrease) / 100;
           }
           if (i === this.earlyYear * 12 + this.earlyMonth) {
-            console.log(fraBenefitPBA, "----fraBenefitPBA-----")
-            console.log(fullRetireMonths, "----fullRetireMonths-----")
-            console.log(this.earlyYear * 12 + this.earlyMonth, "----this.earlyYear * 12 + this.earlyMonth-----")
+            tableFRABenefitPBA = fraBenefitPBA
             monthlyEarly = this.customRound(this.getBenefit(fraBenefitPBA, fullRetireMonths, this.earlyYear * 12 + this.earlyMonth))
           }
           if (i === this.laterYear * 12 + this.laterMonth) {
             monthlyLater = this.customRound(this.getBenefit(fraBenefitPBA, fullRetireMonths, this.laterYear * 12 + this.laterMonth))
           }
-
         }
       } else {
         // sheet 3
         startMonths = this.getMonthOffset(new Date(this.dateOfBirth), new Date())
+        tableFRABenefitPBA = fraBenefitPBA
         monthlyEarly = this.customRound(this.getBenefit(fraBenefitPBA, fullRetireMonths, startMonths))
         for (let i = this.getMonthOffset(new Date(this.dateOfBirth), new Date()) + 1; i <= this.laterYear * 12 + this.laterMonth; i++) {
           if ((i + dateOfBirthMonth) % 12 === 0) {
@@ -388,6 +393,7 @@ export default {
           'date': this.addMonthsToDate(this.dateOfBirth, i),
           'year': parseInt(i / 12),
           'month': parseInt(i % 12),
+          'fraBenefit': this.$formatNumberWithCommas(this.customRound(tableFRABenefitPBA)),
           'earlyMonthly': this.$formatNumberWithCommas(this.customRound(monthlyEarly)),
           'earlyCumulative': this.$formatNumberWithCommas(this.customRound(previousEarlyCumulative)),
           'laterMonthly': this.$formatNumberWithCommas(this.customRound((i < this.laterYear * 12 + this.laterMonth) ? 0 : monthlyLater)),
@@ -395,6 +401,7 @@ export default {
         })
         if ((i + dateOfBirthMonth) % 12 === 11) {
           monthlyEarly = monthlyEarly * (100 + averageAnnualIncrease) / 100;
+          tableFRABenefitPBA = tableFRABenefitPBA * (100 + averageAnnualIncrease) / 100;
           if (i >= this.laterYear * 12 + this.laterMonth) {
             monthlyLater = monthlyLater * (100 + averageAnnualIncrease) / 100;
           }
@@ -687,27 +694,27 @@ export default {
   font-size: 20px;
 }
 
-.breakeven-table table thead tr:nth-child(1) th:nth-child(3) {
+.breakeven-table table thead tr:nth-child(1) th:nth-child(4) {
   background-color: #4897FF;
 }
 
-.breakeven-table table thead tr:nth-child(1) th:nth-child(4) {
+.breakeven-table table thead tr:nth-child(1) th:nth-child(5) {
   background-color: #88DD9B;
 }
 
-.breakeven-table table thead tr:nth-child(2) th:nth-child(n+4):nth-child(-n+5) {
+.breakeven-table table thead tr:nth-child(2) th:nth-child(n+5):nth-child(-n+6) {
   background-color: #CEE1F2;
 }
 
-.breakeven-table table thead tr:nth-child(2) th:nth-child(n+6):nth-child(-n+7) {
+.breakeven-table table thead tr:nth-child(2) th:nth-child(n+7):nth-child(-n+8) {
   background-color: #D6EBD5;
 }
 
-.breakeven-table table tbody tr td:nth-child(n+4):nth-child(-n+5) {
+.breakeven-table table tbody tr td:nth-child(n+5):nth-child(-n+6) {
   background-color: #CEE1F2;
 }
 
-.breakeven-table table tbody tr td:nth-child(n+6):nth-child(-n+7) {
+.breakeven-table table tbody tr td:nth-child(n+7):nth-child(-n+8) {
   background-color: #D6EBD5;
 }
 </style>
