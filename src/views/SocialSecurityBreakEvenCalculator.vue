@@ -9,9 +9,17 @@
           <v-form v-model="validForm" ref="form">
             <v-text-field v-model="dateOfBirth" type="date" label="Date Of Birth"
               :rules="[validateInputDate, dateBiggerThan1943]" />
-            <v-text-field class="mt-2" v-model="formattedBenefitFRAValue" :rules="[$textGreaterThanNegativeRule]"
-              label="Benefit at Full Retirement Age" type="text" prefix="$" @blur="formatBenefitFRAValue"
-              @input="stripBenefitFRAValueFormatting" dense></v-text-field>
+            <v-tooltip location="top">
+              <template v-slot:activator="{ props }">
+                <div v-bind="props" start>
+                  <v-text-field class="mt-2" v-model="formattedBenefitFRAValue" :rules="[$textGreaterThanNegativeRule]"
+                    label="Benefit at Full Retirement Age" type="text" prefix="$" @blur="formatBenefitFRAValue"
+                    @input="stripBenefitFRAValueFormatting" dense></v-text-field>
+                </div>
+              </template>
+              <span>Use the most recent benefit estimate provided by the Social Security Administration</span>
+            </v-tooltip>
+
             <p class="medium-text">Filling Ages&nbsp;
               <v-tooltip location="top">
                 <template v-slot:activator="{ props }">
@@ -694,6 +702,11 @@ export default {
   font-size: 20px;
 }
 
+/* 
+.breakeven-table table thead tr:nth-child(1) th:nth-child(3) {
+  background-color: #B3AEB3;
+} */
+
 .breakeven-table table thead tr:nth-child(1) th:nth-child(4) {
   background-color: #4897FF;
 }
@@ -702,12 +715,20 @@ export default {
   background-color: #88DD9B;
 }
 
+.breakeven-table table thead tr:nth-child(2) th:nth-child(n+4):nth-child(-n+4) {
+  background-color: #B3AEB3;
+}
+
 .breakeven-table table thead tr:nth-child(2) th:nth-child(n+5):nth-child(-n+6) {
   background-color: #CEE1F2;
 }
 
 .breakeven-table table thead tr:nth-child(2) th:nth-child(n+7):nth-child(-n+8) {
   background-color: #D6EBD5;
+}
+
+.breakeven-table table tbody tr td:nth-child(n+4):nth-child(-n+4) {
+  background-color: #B3AEB3;
 }
 
 .breakeven-table table tbody tr td:nth-child(n+5):nth-child(-n+6) {
