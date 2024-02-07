@@ -20,7 +20,7 @@
               <span>Use the most recent benefit estimate provided by the Social Security Administration</span>
             </v-tooltip>
 
-            <p class="medium-text">Filling Ages&nbsp;
+            <p class="medium-text">Filing Ages&nbsp;
               <v-tooltip location="top">
                 <template v-slot:activator="{ props }">
                   <v-icon icon="mdi-help-circle" class="cursor-pointer" size="md" v-bind="props" start />
@@ -28,7 +28,7 @@
                 <span>Enter the two filing ages you want to compare</span>
               </v-tooltip>
             </p>
-            <p v-if="!validFillingAges" class="small-text text-red-accent-4 mt-4">
+            <p v-if="!validFilingAges" class="small-text text-red-accent-4 mt-4">
               Early Filing Age should be before Later Filing Age
             </p>
             <div class="d-flex align-center mt-4">
@@ -70,7 +70,7 @@
           </v-form>
         </v-col>
         <v-col cols="12" lg="7" md="7" sm="12">
-          <div v-if="validForm && validFillingAges">
+          <div v-if="validForm && validFilingAges">
             <div style="max-width: 760px;">
               <div class="px-8 py-4 ml-auto breakEvenAge">
                 <div class="bigSize">
@@ -92,7 +92,7 @@
       </v-row>
       <v-row class="pa-2 mt-4">
         <v-col cols="12" lg="12" md="12" sm="12">
-          <div v-if="validForm && validFillingAges">
+          <div v-if="validForm && validFilingAges">
             <v-data-table :headers="headers" :items="tableData" :items-per-page="-1" :items-per-page-options="pageOptions"
               class="breakeven-table">
             </v-data-table>
@@ -242,7 +242,7 @@ export default {
     },
   },
   computed: {
-    validFillingAges() {
+    validFilingAges() {
       return !!((this.laterYear * 12 + this.laterMonth) >= (this.earlyYear * 12 + this.earlyMonth))
     },
     headers() {
@@ -297,7 +297,7 @@ export default {
   },
   methods: {
     calculate() {
-      if (!this.$refs.form.validate() || !this.validFillingAges) {
+      if (!this.$refs.form.validate() || !this.validFilingAges) {
         return
       }
       let fullRetireMonths = 0;
