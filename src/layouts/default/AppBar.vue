@@ -9,50 +9,6 @@
           Menu
         </v-btn>
       </template>
-
-      <v-list>
-        <v-list-item class="menu-item">
-          <v-list-item-title @click="redirectTo('/')">Mortgage Calculator</v-list-item-title>
-        </v-list-item>
-        <v-list-item class="menu-item">
-          <v-list-item-title @click="redirectTo('/bincodes')">Bin codes</v-list-item-title>
-        </v-list-item>
-        <v-list-item class="menu-item">
-          <v-list-item-title @click="redirectTo('/autoloancalculator')">Auto Loan Calculator</v-list-item-title>
-        </v-list-item>
-        <v-list-item class="menu-item">
-          <v-list-item-title @click="redirectTo('/mcccodes')">Merchants Category Codes</v-list-item-title>
-        </v-list-item>
-        <v-list-item class="menu-item">
-          <v-list-item-title @click="redirectTo('/erccalculator')">ERC Calculator</v-list-item-title>
-        </v-list-item>
-        <v-list-item class="menu-item">
-          <v-list-item-title @click="redirectTo('/federalincometax')">Federal Income Tax Calculator</v-list-item-title>
-        </v-list-item>
-        <v-list-item class="menu-item">
-          <v-list-item-title @click="redirectTo('/creditcardprocessingfee')">Credit Card Processing Fee
-            Calculator</v-list-item-title>
-        </v-list-item>
-        <v-list-item class="menu-item">
-          <v-list-item-title @click="redirectTo('/cdcalculator')">CD Calculator</v-list-item-title>
-        </v-list-item>
-        <v-list-item class="menu-item">
-          <v-list-item-title @click="redirectTo('/simpleloancalculator')">Simple Loan Calculator</v-list-item-title>
-        </v-list-item>
-        <v-list-item class="menu-item">
-          <v-list-item-title @click="redirectTo('/amortizationschedulecalculator')">Amortization Schedule
-            Calculator</v-list-item-title>
-        </v-list-item>
-        <v-list-item class="menu-item">
-          <v-list-item-title @click="redirectTo('/currencyconverter')">Currecny Calculator</v-list-item-title>
-        </v-list-item>
-        <v-list-item class="menu-item">
-          <v-list-item-title @click="redirectTo('/inflationcalculator')">Inflation Calculator</v-list-item-title>
-        </v-list-item>
-        <v-list-item class="menu-item">
-          <v-list-item-title @click="redirectTo('/savingscalculator')">Savings Calculator</v-list-item-title>
-        </v-list-item>
-      </v-list>
     </v-menu>
   </v-app-bar>
 </template>

@@ -29,6 +29,8 @@
               label="Lower Earner Full Retirement Age Benefit" type="text" prefix="$"
               hint="The full retirement age benefit the lower earning spouse earned from their own work"
               @blur="formatLowerEarnerBenefit" @input="stripLowerEarnerBenefitFormatting" dense></v-text-field>
+            <v-text-field v-model.number="inflationRate" :rules="[$numberGreaterThanNegativeRule, numberSmallerThan10]"
+              label="Inflation Rate" suffix="%" dense></v-text-field>
             <v-checkbox v-model="meetDivorcedBenefit"
               label="Do you meet the qualifications for a divorced spouse benefit?"></v-checkbox>
           </v-form>
@@ -45,19 +47,16 @@
               <p class="result-value mb-1">{{ $formatNumberWithCommas(customRound(spousalExcess)) }}
               </p>
             </div>
-            <!-- <hr>
-            <div class="d-flex">
-              <h3><strong>Total Benefit</strong></h3><v-spacer></v-spacer>
-              <p><strong>{{ $formatNumberWithCommas(customRound(lowerEarnerPayment + spousalExcess)) }}</strong></p>
-            </div> -->
-            <!-- <v-data-table :headers="tableHeaders" :items="tableData" :items-per-page="10"
-              :items-per-page-options="pageOptions" class="portfolio-table mt-4">
-            </v-data-table> -->
           </div>
           <div v-else class="mt-2 text-center">
             <h3 class="text-red-accent-2">Please input valid values.</h3>
             <p>{{ errorNotification }}</p>
           </div>
+        </v-col>
+        <v-col v-if="validForm" cols="12" lg="12" md="12" sm="12">
+          <v-data-table :headers="tableHeaders" :items="tableData" :items-per-page="-1"
+            :items-per-page-options="pageOptions" class="portfolio-table mt-4">
+          </v-data-table>
         </v-col>
         <v-col cols="12" lg="12" md="12" sm="12">
           <p class="text-subtitle-2 text-center mt-6 mb-4">Disclaimer: This calculator assumes that lower earning spouse
@@ -97,17 +96,35 @@ export default {
       errorNotification: "",
       tableHeaders: [
         {
-          title: 'Age of Entitlement',
-          value: 'ageOfEntitlement',
+          title: 'Date',
+          value: 'date',
+          width: '135px',
           sortable: true,
         },
         {
-          title: 'Benefit from Lower Earner Work',
-          value: 'lowerEarnerPayment',
+          title: 'Lower Earner Age',
+          value: 'lowerEarnerAge',
+          width: '160px',
         },
         {
-          title: 'Additional Benefit from Spousal Payment',
-          value: 'spousalExcess',
+          title: 'Lower Earner FRA Benefit',
+          value: 'lowerEarnerFRABenefit',
+        },
+        {
+          title: 'Higher Earner FRA Benefit',
+          value: 'higherEarnerFRABenefit',
+        },
+        {
+          title: 'Lower Earner Benefit From Own Record',
+          value: 'lowerEarnerBenefitOwnRecord',
+        },
+        {
+          title: 'Lower Earner Benefit From Spousal Payment',
+          value: 'lowerEarnerBenefitSpousalPayment',
+        },
+        {
+          title: 'Total Benefit Payment',
+          value: 'totalBenefitPayment',
         }
       ],
       tableData: [],
@@ -119,6 +136,8 @@ export default {
       ],
       lowerEarnerPaymentTitle: "",
       spousalExcessTitle: "",
+      inflationRate: 0,
+      fullRetireMonths: 0,
     };
   },
   watch: {
@@ -147,6 +166,10 @@ export default {
       this.calculate();
     },
     meetDivorcedBenefit() {
+      this.$refs.form.validate();
+      this.calculate();
+    },
+    inflationRate() {
       this.$refs.form.validate();
       this.calculate();
     },
@@ -189,19 +212,6 @@ export default {
       this.formattedLowerEarnerBenefit = digits;
     },
     calculate() {
-      // if (this.lowerEarnerDOB && this.lowerEarnerFileDate) {
-      //   if ((new Date(this.addYearsToDate(this.lowerEarnerDOB, 62)) > new Date(this.lowerEarnerFileDate)) || (new Date(this.addYearsToDate(this.lowerEarnerDOB, 70)) < new Date(this.lowerEarnerFileDate))) {
-      //     this.validForm = false;
-      //     this.errorNotification = "Filling ages should be 62~70.";
-      //     return;
-      //   }
-      //   this.errorNotification = "";
-      //   this.validForm = true;
-      // } else {
-      //   this.errorNotification = "Please input valid dates";
-      //   this.validForm = false;
-      //   return;
-      // }
       let spousalPayment = Math.max(parseFloat(this.higherEarnerBenefit) / 2 - parseFloat(this.lowerEarnerBenefit), 0);
       if (!this.meetDivorcedBenefit && !this.higherEarnerFileDate) {
         spousalPayment = 0;
@@ -209,26 +219,26 @@ export default {
       if (!spousalPayment) {
         spousalPayment = 0;
       }
-      let fullRetireMonths = 0;
+
       if (new Date(this.lowerEarnerDOB) > new Date('01/01/1960')) {
         // 67 years and 0 month
-        fullRetireMonths = 67 * 12;
+        this.fullRetireMonths = 67 * 12;
       } else if (new Date(this.lowerEarnerDOB) > new Date('01/01/1959')) {
-        fullRetireMonths = 66 * 12 + 10;
+        this.fullRetireMonths = 66 * 12 + 10;
       } else if (new Date(this.lowerEarnerDOB) > new Date('01/01/1958')) {
-        fullRetireMonths = 66 * 12 + 8;
+        this.fullRetireMonths = 66 * 12 + 8;
       } else if (new Date(this.lowerEarnerDOB) > new Date('01/01/1957')) {
-        fullRetireMonths = 66 * 12 + 6;
+        this.fullRetireMonths = 66 * 12 + 6;
       } else if (new Date(this.lowerEarnerDOB) > new Date('01/01/1956')) {
-        fullRetireMonths = 66 * 12 + 4;
+        this.fullRetireMonths = 66 * 12 + 4;
       } else if (new Date(this.lowerEarnerDOB) > new Date('01/01/1955')) {
-        fullRetireMonths = 66 * 12 + 2;
+        this.fullRetireMonths = 66 * 12 + 2;
       } else {
-        fullRetireMonths = 66 * 12;
+        this.fullRetireMonths = 66 * 12;
       }
       let retiredMonths = this.getMonthOffset(new Date(this.lowerEarnerDOB), new Date(this.lowerEarnerFileDate));
       this.lowerEarnerPaymentTitle = this.getYearsMonth(retiredMonths);
-      this.lowerEarnerPayment = this.getLowerEarnerPayment(fullRetireMonths, retiredMonths);
+      this.lowerEarnerPayment = this.getLowerEarnerPayment(this.lowerEarnerBenefit, this.fullRetireMonths, retiredMonths);
       if (this.meetDivorcedBenefit) {
         retiredMonths = this.getMonthOffset(new Date(this.lowerEarnerDOB), new Date(this.lowerEarnerFileDate));
       } else {
@@ -238,12 +248,12 @@ export default {
       this.spousalExcessTitle = this.getYearsMonth(retiredMonths);
 
       retiredMonths = this.getMonthOffset(new Date(this.lowerEarnerDOB), new Date(this.lowerEarnerFileDate));
-      let lowerEarnerPayment = this.getLowerEarnerPayment(fullRetireMonths, retiredMonths);
-      if (fullRetireMonths > retiredMonths) {
-        if ((fullRetireMonths - retiredMonths) > 36) {
-          this.spousalExcess = spousalPayment * (100 - 36 * 25 / 36 - (fullRetireMonths - retiredMonths - 36) * 5 / 12) / 100;
+      let lowerEarnerPayment = this.getLowerEarnerPayment(this.lowerEarnerBenefit, this.fullRetireMonths, retiredMonths);
+      if (this.fullRetireMonths > retiredMonths) {
+        if ((this.fullRetireMonths - retiredMonths) > 36) {
+          this.spousalExcess = spousalPayment * (100 - 36 * 25 / 36 - (this.fullRetireMonths - retiredMonths - 36) * 5 / 12) / 100;
         } else {
-          this.spousalExcess = spousalPayment * (100 - (fullRetireMonths - retiredMonths) * 25 / 36) / 100;
+          this.spousalExcess = spousalPayment * (100 - (this.fullRetireMonths - retiredMonths) * 25 / 36) / 100;
         }
       } else {
         retiredMonths = Math.min(retiredMonths, 70 * 12);
@@ -252,71 +262,121 @@ export default {
 
       let lowerRetireMonths = this.getMonthOffset(new Date(this.lowerEarnerDOB), new Date(this.lowerEarnerFileDate))
       let higherRetireMonths = this.getMonthOffset(new Date(this.lowerEarnerDOB), new Date(this.higherEarnerFileDate))
-      if ((lowerRetireMonths < fullRetireMonths) && (higherRetireMonths >= fullRetireMonths) && !this.meetDivorcedBenefit) {
+      if ((lowerRetireMonths < this.fullRetireMonths) && (higherRetireMonths >= this.fullRetireMonths) && !this.meetDivorcedBenefit) {
         this.spousalExcess = Math.max(spousalPayment, 0)
       }
+      this.updateTable();
     },
-    getLowerEarnerPayment(fullRetireMonths, retiredMonths) {
+    updateTable() {
+      this.tableData = [];
+      let lowerEarnerFRABenefit = this.lowerEarnerBenefit;
+      let higherEarnerBenefit = this.higherEarnerBenefit;
+      let dateOfBirth = new Date(this.lowerEarnerDOB)
+      let dateOfBirthMonth = dateOfBirth.getUTCMonth()
+      for (let i = 62 * 12; i <= 70 * 12; i++) {
+
+        let lowerEarnerBenefitSpousalPayment = Math.max(parseFloat(this.higherEarnerBenefit) / 2 - parseFloat(lowerEarnerFRABenefit), 0);
+        if (!this.meetDivorcedBenefit && !this.higherEarnerFileDate) {
+          lowerEarnerBenefitSpousalPayment = 0;
+        }
+        if (!lowerEarnerBenefitSpousalPayment) {
+          lowerEarnerBenefitSpousalPayment = 0;
+        }
+
+        let lowerEarnerBenefitOwnRecord = this.getLowerEarnerPayment(lowerEarnerFRABenefit, this.fullRetireMonths, i);
+        let lowerEarnerPayment = this.getLowerEarnerPayment(lowerEarnerFRABenefit, this.fullRetireMonths, i);
+        if (this.fullRetireMonths > i) {
+          if ((this.fullRetireMonths - i) > 36) {
+            lowerEarnerBenefitSpousalPayment = lowerEarnerBenefitSpousalPayment * (100 - 36 * 25 / 36 - (this.fullRetireMonths - i - 36) * 5 / 12) / 100;
+          } else {
+            lowerEarnerBenefitSpousalPayment = lowerEarnerBenefitSpousalPayment * (100 - (this.fullRetireMonths - i) * 25 / 36) / 100;
+          }
+        } else {
+          lowerEarnerBenefitSpousalPayment = Math.max(lowerEarnerBenefitSpousalPayment + parseFloat(lowerEarnerFRABenefit) - lowerEarnerPayment, 0);
+        }
+
+        let lowerRetireMonths = this.getMonthOffset(new Date(this.lowerEarnerDOB), new Date(this.lowerEarnerFileDate))
+        let higherRetireMonths = this.getMonthOffset(new Date(this.lowerEarnerDOB), new Date(this.higherEarnerFileDate))
+        if ((lowerRetireMonths < this.fullRetireMonths) && (higherRetireMonths >= this.fullRetireMonths) && !this.meetDivorcedBenefit) {
+          lowerEarnerBenefitSpousalPayment = Math.max(lowerEarnerBenefitSpousalPayment, 0)
+        }
+
+        this.tableData.push({
+          'date': this.addMonthsToDate(this.lowerEarnerDOB, i),
+          'lowerEarnerAge': parseInt(i / 12) + ' Years ' + parseInt(i % 12) + ' Months',
+          'lowerEarnerFRABenefit': this.$formatNumberWithCommas(lowerEarnerFRABenefit),
+          'higherEarnerFRABenefit': this.$formatNumberWithCommas(higherEarnerBenefit),
+          'lowerEarnerBenefitOwnRecord': this.$formatNumberWithCommas(lowerEarnerBenefitOwnRecord),
+          'lowerEarnerBenefitSpousalPayment': this.$formatNumberWithCommas(lowerEarnerBenefitSpousalPayment),
+          'totalBenefitPayment': this.$formatNumberWithCommas(lowerEarnerBenefitOwnRecord + lowerEarnerBenefitSpousalPayment),
+        })
+        if ((i + dateOfBirthMonth) % 12 === 11) {
+          lowerEarnerFRABenefit = lowerEarnerFRABenefit * (100 + this.inflationRate) / 100;
+          higherEarnerBenefit = higherEarnerBenefit * (100 + this.inflationRate) / 100;
+        }
+      }
+    },
+    addMonthsToDate(dateString, monthsToAdd) {
+      let date = new Date(dateString);
+      date.setUTCDate(15);
+      date.setUTCMonth(date.getUTCMonth() + monthsToAdd);
+      return date.toLocaleString('en-US', { month: 'long', timeZone: 'UTC' }) + ' ' + date.getUTCFullYear();
+    },
+    // addTableRowData(fullRetireMonth, retiredMonths, spousalPayment) {
+    //   let fullRetireMonths = fullRetireMonth;
+    //   let lowerEarnerPayment;
+    //   let spousalExcess;
+    //   if (fullRetireMonths > retiredMonths) {
+    //     if ((fullRetireMonths - retiredMonths) > 36) {
+    //       lowerEarnerPayment = this.lowerEarnerBenefit * (100 - 36 * 5 / 9 - (fullRetireMonths - retiredMonths - 36) * 5 / 12) / 100;
+    //     } else {
+    //       lowerEarnerPayment = this.lowerEarnerBenefit * (100 - (fullRetireMonths - retiredMonths) * 5 / 9) / 100;
+    //     }
+    //   } else {
+    //     lowerEarnerPayment = this.lowerEarnerBenefit * (100 + (retiredMonths - fullRetireMonths) * 2 / 3) / 100;
+    //   }
+    //   if (fullRetireMonths > retiredMonths) {
+    //     if ((fullRetireMonths - retiredMonths) > 36) {
+    //       spousalExcess = spousalPayment * (100 - 36 * 25 / 36 - (fullRetireMonths - retiredMonths - 36) * 5 / 12) / 100;
+    //     } else {
+    //       spousalExcess = spousalPayment * (100 - (fullRetireMonths - retiredMonths) * 25 / 36) / 100;
+    //     }
+    //   } else {
+    //     retiredMonths = Math.min(retiredMonths, 70 * 12);
+    //     spousalExcess = spousalPayment + this.lowerEarnerBenefit - lowerEarnerPayment;
+    //   }
+    //   let ageOfEntitlement = parseInt(retiredMonths / 12) + ' Years'
+    //   if (retiredMonths % 12 !== 0) {
+    //     if (retiredMonths % 12 === 1) {
+    //       ageOfEntitlement = ageOfEntitlement + ' and 1 month';
+    //     } else {
+    //       ageOfEntitlement = ageOfEntitlement + ' and ' + (retiredMonths % 12) + " months";
+    //     }
+    //   }
+    //   this.tableData.push({
+    //     'ageOfEntitlement': ageOfEntitlement,
+    //     'lowerEarnerPayment': this.$formatNumberWithCommas(lowerEarnerPayment),
+    //     'spousalExcess': this.$formatNumberWithCommas(spousalExcess),
+    //   });
+    // },
+    getLowerEarnerPayment(lowerEarnerBenefit, fullRetireMonths, retiredMonths) {
       if (fullRetireMonths > retiredMonths) {
         if ((fullRetireMonths - retiredMonths) > 36) {
-          return this.lowerEarnerBenefit * (100 - 36 * 5 / 9 - (fullRetireMonths - retiredMonths - 36) * 5 / 12) / 100;
+          return lowerEarnerBenefit * (100 - 36 * 5 / 9 - (fullRetireMonths - retiredMonths - 36) * 5 / 12) / 100;
         } else {
-          return this.lowerEarnerBenefit * (100 - (fullRetireMonths - retiredMonths) * 5 / 9) / 100;
+          return lowerEarnerBenefit * (100 - (fullRetireMonths - retiredMonths) * 5 / 9) / 100;
         }
       } else {
         retiredMonths = Math.min(retiredMonths, 70 * 12);
-        return this.lowerEarnerBenefit * (100 + (retiredMonths - fullRetireMonths) * 2 / 3) / 100;
+        return lowerEarnerBenefit * (100 + (retiredMonths - fullRetireMonths) * 2 / 3) / 100;
       }
     },
     getYearsMonth(retiredMonths) {
       let ageOfEntitlement = parseInt(retiredMonths / 12) + ' years'
-      // if (retiredMonths % 12 !== 0) {
-      //   if (retiredMonths % 12 === 1) {
-      //     ageOfEntitlement = ageOfEntitlement + ' and 1 Month';
-      //   } else {
-      //     ageOfEntitlement = ageOfEntitlement + ' and ' + (retiredMonths % 12) + " Months";
-      //   }
-      // }
       ageOfEntitlement = ageOfEntitlement + ' and ' + (retiredMonths % 12) + " months";
       return ageOfEntitlement;
     },
-    addTableRowData(fullRetireMonth, retiredMonths, spousalPayment) {
-      let fullRetireMonths = fullRetireMonth;
-      let lowerEarnerPayment;
-      let spousalExcess;
-      if (fullRetireMonths > retiredMonths) {
-        if ((fullRetireMonths - retiredMonths) > 36) {
-          lowerEarnerPayment = this.lowerEarnerBenefit * (100 - 36 * 5 / 9 - (fullRetireMonths - retiredMonths - 36) * 5 / 12) / 100;
-        } else {
-          lowerEarnerPayment = this.lowerEarnerBenefit * (100 - (fullRetireMonths - retiredMonths) * 5 / 9) / 100;
-        }
-      } else {
-        lowerEarnerPayment = this.lowerEarnerBenefit * (100 + (retiredMonths - fullRetireMonths) * 2 / 3) / 100;
-      }
-      if (fullRetireMonths > retiredMonths) {
-        if ((fullRetireMonths - retiredMonths) > 36) {
-          spousalExcess = spousalPayment * (100 - 36 * 25 / 36 - (fullRetireMonths - retiredMonths - 36) * 5 / 12) / 100;
-        } else {
-          spousalExcess = spousalPayment * (100 - (fullRetireMonths - retiredMonths) * 25 / 36) / 100;
-        }
-      } else {
-        retiredMonths = Math.min(retiredMonths, 70 * 12);
-        spousalExcess = spousalPayment + this.lowerEarnerBenefit - lowerEarnerPayment;
-      }
-      let ageOfEntitlement = parseInt(retiredMonths / 12) + ' Years'
-      if (retiredMonths % 12 !== 0) {
-        if (retiredMonths % 12 === 1) {
-          ageOfEntitlement = ageOfEntitlement + ' and 1 month';
-        } else {
-          ageOfEntitlement = ageOfEntitlement + ' and ' + (retiredMonths % 12) + " months";
-        }
-      }
-      this.tableData.push({
-        'ageOfEntitlement': ageOfEntitlement,
-        'lowerEarnerPayment': this.$formatNumberWithCommas(lowerEarnerPayment),
-        'spousalExcess': this.$formatNumberWithCommas(spousalExcess),
-      });
-    },
+
     getMonthOffset(startDate, endDate) {
       // Calculate the difference in months
       const months = (endDate.getUTCFullYear() - startDate.getUTCFullYear()) * 12 +
@@ -366,7 +426,14 @@ export default {
         return `The lower earner should file between the ages of 62 and 70 years old.`;
       }
       return true
-    }
+    },
+    numberSmallerThan10(value) {
+      const numericValue = parseFloat(value);
+      if (!isNaN(numericValue) && numericValue > 10) {
+        return `Inflation rate should not be greater than 10%.`; // Validation fails
+      }
+      return true; // Validation passes
+    },
   },
 };
 </script>
