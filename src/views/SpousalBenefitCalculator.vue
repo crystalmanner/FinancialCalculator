@@ -55,7 +55,7 @@
         </v-col>
         <v-col v-if="validForm" cols="12" lg="12" md="12" sm="12">
           <v-data-table :headers="tableHeaders" :items="tableData" :items-per-page="-1"
-            :items-per-page-options="pageOptions" class="portfolio-table mt-4">
+            :items-per-page-options="pageOptions" class="spousal-benefit-table mt-4">
           </v-data-table>
         </v-col>
         <v-col cols="12" lg="12" md="12" sm="12">
@@ -109,22 +109,27 @@ export default {
         {
           title: 'Lower Earner FRA Benefit',
           value: 'lowerEarnerFRABenefit',
+          align: 'center',
         },
         {
           title: 'Higher Earner FRA Benefit',
           value: 'higherEarnerFRABenefit',
+          align: 'center',
         },
         {
           title: 'Lower Earner Benefit From Own Record',
           value: 'lowerEarnerBenefitOwnRecord',
+          align: 'center',
         },
         {
           title: 'Lower Earner Benefit From Spousal Payment',
           value: 'lowerEarnerBenefitSpousalPayment',
+          align: 'center',
         },
         {
           title: 'Total Benefit Payment',
           value: 'totalBenefitPayment',
+          align: 'center',
         }
       ],
       tableData: [],
@@ -489,5 +494,37 @@ export default {
   padding: 0.4rem 0.8rem;
   border-radius: 0.6rem;
   font-family: sans-serif;
+}
+
+.spousal-benefit-table thead tr:nth-child(1) th:nth-child(n+3):nth-child(-n+4) {
+  background-color: #B3AEB3;
+}
+
+.spousal-benefit-table tbody tr td:nth-child(n+3):nth-child(-n+4) {
+  background-color: #B3AEB3;
+}
+
+.spousal-benefit-table thead tr:nth-child(1) th:nth-child(5) {
+  background-color: #CEE1F2;
+}
+
+.spousal-benefit-table tbody tr td:nth-child(5) {
+  background-color: #CEE1F2;
+}
+
+.spousal-benefit-table thead tr:nth-child(1) th:nth-child(6) {
+  background-color: #4897FF;
+}
+
+.spousal-benefit-table tbody tr td:nth-child(6) {
+  background-color: #4897FF;
+}
+
+.spousal-benefit-table thead tr:nth-child(1) th:nth-child(7) {
+  background-color: #D6EBD5;
+}
+
+.spousal-benefit-table tbody tr td:nth-child(7) {
+  background-color: #D6EBD5;
 }
 </style>
