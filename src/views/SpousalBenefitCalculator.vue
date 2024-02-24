@@ -309,11 +309,11 @@ export default {
         this.tableData.push({
           'date': this.addMonthsToDate(this.lowerEarnerDOB, i),
           'lowerEarnerAge': parseInt(i / 12) + ' Years ' + parseInt(i % 12) + ' Months',
-          'lowerEarnerFRABenefit': this.$formatNumberWithCommas(lowerEarnerFRABenefit),
-          'higherEarnerFRABenefit': this.$formatNumberWithCommas(higherEarnerBenefit),
-          'lowerEarnerBenefitOwnRecord': this.$formatNumberWithCommas(lowerEarnerBenefitOwnRecord),
-          'lowerEarnerBenefitSpousalPayment': this.$formatNumberWithCommas(lowerEarnerBenefitSpousalPayment),
-          'totalBenefitPayment': this.$formatNumberWithCommas(lowerEarnerBenefitOwnRecord + lowerEarnerBenefitSpousalPayment),
+          'lowerEarnerFRABenefit': this.$formatNumberWithCommas(this.customRound(lowerEarnerFRABenefit)),
+          'higherEarnerFRABenefit': this.$formatNumberWithCommas(this.customRound(higherEarnerBenefit)),
+          'lowerEarnerBenefitOwnRecord': this.$formatNumberWithCommas(this.customRound(lowerEarnerBenefitOwnRecord)),
+          'lowerEarnerBenefitSpousalPayment': this.$formatNumberWithCommas(this.customRound(lowerEarnerBenefitSpousalPayment)),
+          'totalBenefitPayment': this.$formatNumberWithCommas(this.customRound(lowerEarnerBenefitOwnRecord + lowerEarnerBenefitSpousalPayment)),
         })
         if ((i + dateOfBirthMonth) % 12 === 11) {
           lowerEarnerFRABenefit = lowerEarnerFRABenefit * (100 + this.inflationRate) / 100;
