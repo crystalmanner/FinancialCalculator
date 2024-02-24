@@ -314,8 +314,8 @@ export default {
           'lowerEarnerFRABenefit': this.$formatNumberWithCommas(this.customRound(lowerEarnerFRABenefit)),
           'higherEarnerFRABenefit': this.$formatNumberWithCommas(this.customRound(higherEarnerBenefit)),
           'lowerEarnerBenefitOwnRecord': this.$formatNumberWithCommas(this.customRound(lowerEarnerBenefitOwnRecord)),
-          'lowerEarnerBenefitSpousalPayment': this.$formatNumberWithCommas(this.customRound(lowerEarnerBenefitSpousalPayment)),
-          'totalBenefitPayment': this.$formatNumberWithCommas(this.customRound(lowerEarnerBenefitOwnRecord + lowerEarnerBenefitSpousalPayment)),
+          'lowerEarnerBenefitSpousalPayment': this.$formatNumberWithCommas(this.customRound((i < lowerRetireMonths) ? 0 : lowerEarnerBenefitSpousalPayment)),
+          'totalBenefitPayment': this.$formatNumberWithCommas(this.customRound(lowerEarnerBenefitOwnRecord + ((i < lowerRetireMonths) ? 0 : lowerEarnerBenefitSpousalPayment))),
         })
         if ((i + dateOfBirthMonth) % 12 === 11) {
           lowerEarnerFRABenefit = lowerEarnerFRABenefit * (100 + this.inflationRate) / 100;
