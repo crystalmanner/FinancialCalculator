@@ -127,7 +127,7 @@ export default {
           align: 'center',
         },
         {
-          title: 'Total Benefit Payment',
+          title: 'Lower Earner Total Benefit Payment',
           value: 'totalBenefitPayment',
           align: 'center',
         }
