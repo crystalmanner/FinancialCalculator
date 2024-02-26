@@ -280,6 +280,10 @@ export default {
       let dateOfBirthMonth = dateOfBirth.getUTCMonth()
       let lowerRetireMonths = this.getMonthOffset(new Date(this.lowerEarnerDOB), new Date(this.lowerEarnerFileDate))
       let higherRetireMonths = this.getMonthOffset(new Date(this.lowerEarnerDOB), new Date(this.higherEarnerFileDate))
+      let retiredMonths = this.getMonthOffset(new Date(this.lowerEarnerDOB), new Date(this.lowerEarnerFileDate));
+      if (!this.meetDivorcedBenefit) {
+        retiredMonths = this.getMonthOffset(new Date(this.lowerEarnerDOB), this.getMaxDate(new Date(this.lowerEarnerFileDate), new Date(this.higherEarnerFileDate)));
+      }
 
       for (let i = 62 * 12; i <= 70 * 12; i++) {
 
@@ -315,8 +319,8 @@ export default {
           'lowerEarnerFRABenefit': this.$formatNumberWithCommas(this.customRound(lowerEarnerFRABenefit)),
           'higherEarnerFRABenefit': this.$formatNumberWithCommas(this.customRound(higherEarnerBenefit)),
           'lowerEarnerBenefitOwnRecord': this.$formatNumberWithCommas(this.customRound(lowerEarnerBenefitOwnRecord)),
-          'lowerEarnerBenefitSpousalPayment': this.$formatNumberWithCommas(this.customRound((i < lowerRetireMonths) ? 0 : lowerEarnerBenefitSpousalPayment)),
-          'totalBenefitPayment': this.$formatNumberWithCommas(this.customRound(lowerEarnerBenefitOwnRecord + ((i < lowerRetireMonths) ? 0 : lowerEarnerBenefitSpousalPayment))),
+          'lowerEarnerBenefitSpousalPayment': this.$formatNumberWithCommas(this.customRound((i < retiredMonths) ? 0 : lowerEarnerBenefitSpousalPayment)),
+          'totalBenefitPayment': this.$formatNumberWithCommas(this.customRound(lowerEarnerBenefitOwnRecord + ((i < retiredMonths) ? 0 : lowerEarnerBenefitSpousalPayment))),
         })
         if (((i + dateOfBirthMonth) % 12 === 11)) {
           lowerEarnerFRABenefit = lowerEarnerFRABenefit * (100 + this.inflationRate) / 100;
