@@ -29,8 +29,8 @@
               label="Lower Earner Full Retirement Age Benefit" type="text" prefix="$"
               hint="The full retirement age benefit the lower earning spouse earned from their own work"
               @blur="formatLowerEarnerBenefit" @input="stripLowerEarnerBenefitFormatting" dense></v-text-field>
-            <v-text-field v-model.number="inflationRate" :rules="[$numberGreaterThanNegativeRule, numberSmallerThan10]"
-              label="Inflation Rate" suffix="%" dense></v-text-field>
+            <!-- <v-text-field v-model.number="inflationRate" :rules="[$numberGreaterThanNegativeRule, numberSmallerThan10]"
+              label="Inflation Rate" suffix="%" dense></v-text-field> -->
             <v-checkbox v-model="meetDivorcedBenefit"
               label="Do you meet the qualifications for a divorced spouse benefit?"></v-checkbox>
           </v-form>
@@ -141,7 +141,7 @@ export default {
       ],
       lowerEarnerPaymentTitle: "",
       spousalExcessTitle: "",
-      inflationRate: 1,
+      inflationRate: 0,
       fullRetireMonths: 0,
     };
   },
