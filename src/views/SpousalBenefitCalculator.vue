@@ -300,9 +300,11 @@ export default {
 
         if (this.fullRetireMonths > i) {
           if ((this.fullRetireMonths - i) > 36) {
-            lowerEarnerBenefitSpousalPayment = lowerEarnerBenefitSpousalPayment * (100 - 36 * 25 / 36 - (this.fullRetireMonths - i - 36) * 5 / 12) / 100;
+            // lowerEarnerBenefitSpousalPayment = lowerEarnerBenefitSpousalPayment * (100 - 36 * 25 / 36 - (this.fullRetireMonths - i - 36) * 5 / 12) / 100;
+            lowerEarnerBenefitSpousalPayment = lowerEarnerBenefitSpousalPayment * (100 - 36 * 25 / 36 - (this.fullRetireMonths - lowerRetireMonths - 36) * 5 / 12) / 100;
           } else {
-            lowerEarnerBenefitSpousalPayment = lowerEarnerBenefitSpousalPayment * (100 - (this.fullRetireMonths - i) * 25 / 36) / 100;
+            // lowerEarnerBenefitSpousalPayment = lowerEarnerBenefitSpousalPayment * (100 - (this.fullRetireMonths - i) * 25 / 36) / 100;
+            lowerEarnerBenefitSpousalPayment = lowerEarnerBenefitSpousalPayment * (100 - (this.fullRetireMonths - lowerRetireMonths) * 25 / 36) / 100;
           }
         } else {
           lowerEarnerBenefitSpousalPayment = Math.max(lowerEarnerBenefitSpousalPayment + parseFloat(lowerEarnerFRABenefit) - lowerEarnerBenefitOwnRecord, 0);
