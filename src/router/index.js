@@ -17,6 +17,11 @@ const routes = [
         component: () => import('@/views/SpousalBenefitCalculator.vue'),
       },
       {
+        path: '/spousal-benefit-inflation-calculator',
+        name: 'SpousalBenefitInflationCalculator',
+        component: () => import('@/views/SpousalBenefitInflationCalculator.vue'),
+      },
+      {
         path: '/portfoliocalculator',
         name: 'PortfolioCalculator',
         component: () => import('@/views/PortfolioCalculator.vue'),
