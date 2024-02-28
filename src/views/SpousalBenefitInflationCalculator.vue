@@ -469,6 +469,20 @@ export default {
   font-family: sans-serif;
 }
 
+.spousal-benefit-table {
+  overflow-y: auto;
+  height: 500px;
+}
+
+.spousal-benefit-table thead tr {
+  position: sticky;
+  top: 0;
+}
+
+.spousal-benefit-table thead tr:nth-child(1) th:nth-child(n+1):nth-child(-n+2) {
+  background-color: #fff;
+}
+
 .spousal-benefit-table thead tr:nth-child(1) th:nth-child(n+3):nth-child(-n+4) {
   background-color: #B3AEB3;
 }
