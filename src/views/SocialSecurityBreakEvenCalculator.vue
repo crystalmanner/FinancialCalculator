@@ -707,6 +707,24 @@ export default {
   background-color: #B3AEB3;
 } */
 
+.breakeven-table {
+  overflow-y: auto;
+  height: 600px;
+}
+
+.breakeven-table thead {
+  position: sticky;
+  top: 0;
+}
+
+.breakeven-table thead tr:nth-child(1) th:nth-child(n+1):nth-child(-n+3) {
+  background-color: #fff;
+}
+
+.breakeven-table thead tr:nth-child(2) th:nth-child(n+1):nth-child(-n+3) {
+  background-color: #fff;
+}
+
 .breakeven-table table thead tr:nth-child(1) th:nth-child(4) {
   background-color: #4897FF;
 }

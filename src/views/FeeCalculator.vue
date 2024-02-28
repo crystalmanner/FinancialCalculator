@@ -96,7 +96,7 @@
                 </div>
               </v-window-item>
               <v-window-item :value="2">
-                <v-data-table :headers="headers" :items="tableData" :items-per-page="-1"
+                <v-data-table class="fee-table" :headers="headers" :items="tableData" :items-per-page="-1"
                   :items-per-page-options="pageOptions"></v-data-table>
               </v-window-item>
             </v-window>
@@ -431,5 +431,19 @@ export default {
 .big-text {
   font-size: 20px;
   font-weight: 700;
+}
+
+.fee-table {
+  overflow-y: auto;
+  height: 450px;
+}
+
+.fee-table thead tr {
+  position: sticky;
+  top: 0;
+}
+
+.fee-table thead tr {
+  background-color: #fff;
 }
 </style>

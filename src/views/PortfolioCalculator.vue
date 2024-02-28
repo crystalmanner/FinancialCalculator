@@ -638,6 +638,24 @@ export default {
   width: 50%;
 }
 
+.portfolio-table {
+  overflow-y: auto;
+  height: 600px;
+}
+
+.portfolio-table thead {
+  position: sticky;
+  top: 0;
+}
+
+.portfolio-table thead tr:nth-child(1) th:nth-child(1) {
+  background-color: #fff;
+}
+
+.portfolio-table thead tr:nth-child(2) th:nth-child(1) {
+  background-color: #fff;
+}
+
 .portfolio-table table thead tr:nth-child(1) th:nth-child(2) {
   background-color: #4897FF;
 }
@@ -676,6 +694,5 @@ export default {
 .text-field-label input {
   padding-top: 24px;
   padding-bottom: 8px;
-
 }
 </style>
