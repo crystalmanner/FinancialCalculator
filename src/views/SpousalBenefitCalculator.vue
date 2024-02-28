@@ -40,11 +40,11 @@
             <div class="result-section">
               <div class="title">Benefit from Lower Earner Work at <i>{{ lowerEarnerPaymentTitle }}</i></div>
               <div class="result-value mb-2">
-                {{ $formatNumberWithCommas(customRound(lowerEarnerPayment)) }}
+                {{ $formatNumberWithCommas($customRound(lowerEarnerPayment)) }}
               </div>
               <div class="title">Additional Benefit from Spousal Payment at <i>{{ spousalExcessTitle }}</i></div>
               <v-spacer></v-spacer>
-              <p class="result-value mb-1">{{ $formatNumberWithCommas(customRound(spousalExcess)) }}
+              <p class="result-value mb-1">{{ $formatNumberWithCommas($customRound(spousalExcess)) }}
               </p>
             </div>
           </div>
@@ -318,11 +318,11 @@ export default {
         this.tableData.push({
           'date': this.addMonthsToDate(this.lowerEarnerDOB, i),
           'lowerEarnerAge': parseInt(i / 12) + ' Years ' + parseInt(i % 12) + ' Months',
-          'lowerEarnerFRABenefit': this.$formatNumberWithCommas(this.customRound(lowerEarnerFRABenefit)),
-          'higherEarnerFRABenefit': this.$formatNumberWithCommas(this.customRound(higherEarnerBenefit)),
-          'lowerEarnerBenefitOwnRecord': this.$formatNumberWithCommas(this.customRound(lowerEarnerBenefitOwnRecord)),
-          'lowerEarnerBenefitSpousalPayment': this.$formatNumberWithCommas(this.customRound((i < retiredMonths) ? 0 : lowerEarnerBenefitSpousalPayment)),
-          'totalBenefitPayment': this.$formatNumberWithCommas(this.customRound(lowerEarnerBenefitOwnRecord + ((i < retiredMonths) ? 0 : lowerEarnerBenefitSpousalPayment))),
+          'lowerEarnerFRABenefit': this.$formatNumberWithCommas(this.$customRound(lowerEarnerFRABenefit)),
+          'higherEarnerFRABenefit': this.$formatNumberWithCommas(this.$customRound(higherEarnerBenefit)),
+          'lowerEarnerBenefitOwnRecord': this.$formatNumberWithCommas(this.$customRound(lowerEarnerBenefitOwnRecord)),
+          'lowerEarnerBenefitSpousalPayment': this.$formatNumberWithCommas(this.$customRound((i < retiredMonths) ? 0 : lowerEarnerBenefitSpousalPayment)),
+          'totalBenefitPayment': this.$formatNumberWithCommas(this.$customRound(lowerEarnerBenefitOwnRecord + ((i < retiredMonths) ? 0 : lowerEarnerBenefitSpousalPayment))),
         })
         if (((i + dateOfBirthMonth) % 12 === 11)) {
           lowerEarnerFRABenefit = lowerEarnerFRABenefit * (100 + this.inflationRate) / 100;
@@ -369,17 +369,6 @@ export default {
       const newDate = new Date(date);
       newDate.setFullYear(newDate.getUTCFullYear() + yearsToAdd);
       return newDate;
-    },
-    customRound(value) {
-      const decimalPart = value - Math.floor(value);
-
-      if (decimalPart >= 0.5) {
-        // If decimal part is greater than or equal to 0.5, use Math.ceil()
-        return Math.ceil(value);
-      } else {
-        // If decimal part is less than 0.5, use Math.floor()
-        return Math.floor(value);
-      }
     },
     dateBiggerThan1943(date) {
       if (!date || (new Date(date) < new Date('1943-01-02'))) {

@@ -357,23 +357,23 @@ export default {
           }
           if (i === this.earlyYear * 12 + this.earlyMonth) {
             tableFRABenefitPBA = fraBenefitPBA
-            monthlyEarly = this.customRound(this.getBenefit(fraBenefitPBA, fullRetireMonths, this.earlyYear * 12 + this.earlyMonth))
+            monthlyEarly = this.$customRound(this.getBenefit(fraBenefitPBA, fullRetireMonths, this.earlyYear * 12 + this.earlyMonth))
           }
           if (i === this.laterYear * 12 + this.laterMonth) {
-            monthlyLater = this.customRound(this.getBenefit(fraBenefitPBA, fullRetireMonths, this.laterYear * 12 + this.laterMonth))
+            monthlyLater = this.$customRound(this.getBenefit(fraBenefitPBA, fullRetireMonths, this.laterYear * 12 + this.laterMonth))
           }
         }
       } else {
         // sheet 3
         startMonths = this.getMonthOffset(new Date(this.dateOfBirth), new Date())
         tableFRABenefitPBA = fraBenefitPBA
-        monthlyEarly = this.customRound(this.getBenefit(fraBenefitPBA, fullRetireMonths, startMonths))
+        monthlyEarly = this.$customRound(this.getBenefit(fraBenefitPBA, fullRetireMonths, startMonths))
         for (let i = this.getMonthOffset(new Date(this.dateOfBirth), new Date()) + 1; i <= this.laterYear * 12 + this.laterMonth; i++) {
           if ((i + dateOfBirthMonth) % 12 === 0) {
             fraBenefitPBA = fraBenefitPBA * (100 + averageAnnualIncrease) / 100;
           }
         }
-        monthlyLater = this.customRound(this.getBenefit(fraBenefitPBA, fullRetireMonths, this.laterYear * 12 + this.laterMonth))
+        monthlyLater = this.$customRound(this.getBenefit(fraBenefitPBA, fullRetireMonths, this.laterYear * 12 + this.laterMonth))
       }
 
       let previousEarlyCumulative = 0
@@ -401,11 +401,11 @@ export default {
           'date': this.addMonthsToDate(this.dateOfBirth, i),
           'year': parseInt(i / 12),
           'month': parseInt(i % 12),
-          'fraBenefit': this.$formatNumberWithCommas(this.customRound(tableFRABenefitPBA)),
-          'earlyMonthly': this.$formatNumberWithCommas(this.customRound(monthlyEarly)),
-          'earlyCumulative': this.$formatNumberWithCommas(this.customRound(previousEarlyCumulative)),
-          'laterMonthly': this.$formatNumberWithCommas(this.customRound((i < this.laterYear * 12 + this.laterMonth) ? 0 : monthlyLater)),
-          'laterCumulative': this.$formatNumberWithCommas(this.customRound(previousLaterCumulative)),
+          'fraBenefit': this.$formatNumberWithCommas(this.$customRound(tableFRABenefitPBA)),
+          'earlyMonthly': this.$formatNumberWithCommas(this.$customRound(monthlyEarly)),
+          'earlyCumulative': this.$formatNumberWithCommas(this.$customRound(previousEarlyCumulative)),
+          'laterMonthly': this.$formatNumberWithCommas(this.$customRound((i < this.laterYear * 12 + this.laterMonth) ? 0 : monthlyLater)),
+          'laterCumulative': this.$formatNumberWithCommas(this.$customRound(previousLaterCumulative)),
         })
         if ((i + dateOfBirthMonth) % 12 === 11) {
           monthlyEarly = monthlyEarly * (100 + averageAnnualIncrease) / 100;
@@ -432,16 +432,6 @@ export default {
       return date.toLocaleString('en-US', { month: 'long', timeZone: 'UTC' }) + ' ' + date.getUTCFullYear();
     },
 
-    customRound(value) {
-      const decimalPart = value - Math.floor(value);
-      if (decimalPart >= 0.5) {
-        // If decimal part is greater than or equal to 0.5, use Math.ceil()
-        return Math.ceil(value);
-      } else {
-        // If decimal part is less than 0.5, use Math.floor()
-        return Math.floor(value);
-      }
-    },
     getBenefit(fraBenefit, fullRetireMonths, retiredMonths) {
       if (fullRetireMonths > retiredMonths) {
         if ((fullRetireMonths - retiredMonths) > 36) {

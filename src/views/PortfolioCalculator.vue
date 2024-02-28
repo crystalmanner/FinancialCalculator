@@ -101,11 +101,11 @@
               </div>
               <div class="width-50">
                 <h4>
-                  {{ $formatNumberWithCommas(customRound(currentTotalAdvisoryExpense + currentTotalInvestmentExpense)) }}
+                  {{ $formatNumberWithCommas($customRound(currentTotalAdvisoryExpense + currentTotalInvestmentExpense)) }}
                 </h4>
                 <ul class="ml-5">
-                  <li>{{ $formatNumberWithCommas(customRound(currentTotalAdvisoryExpense)) }}</li>
-                  <li>{{ $formatNumberWithCommas(customRound(currentTotalInvestmentExpense)) }}</li>
+                  <li>{{ $formatNumberWithCommas($customRound(currentTotalAdvisoryExpense)) }}</li>
+                  <li>{{ $formatNumberWithCommas($customRound(currentTotalInvestmentExpense)) }}</li>
                 </ul>
               </div>
             </div>
@@ -119,11 +119,11 @@
               </div>
               <div class="width-50">
                 <h4>
-                  {{ $formatNumberWithCommas(customRound(proposedTotalAdvisoryExpense + proposedTotalInvestmentExpense)) }}
+                  {{ $formatNumberWithCommas($customRound(proposedTotalAdvisoryExpense + proposedTotalInvestmentExpense)) }}
                 </h4>
                 <ul class="ml-5">
-                  <li>{{ $formatNumberWithCommas(customRound(proposedTotalAdvisoryExpense)) }}</li>
-                  <li>{{ $formatNumberWithCommas(customRound(proposedTotalInvestmentExpense)) }}</li>
+                  <li>{{ $formatNumberWithCommas($customRound(proposedTotalAdvisoryExpense)) }}</li>
+                  <li>{{ $formatNumberWithCommas($customRound(proposedTotalInvestmentExpense)) }}</li>
                 </ul>
               </div>
             </div>
@@ -134,7 +134,7 @@
               </div>
               <div class="width-50">
                 <h4>
-                  {{ $formatNumberWithCommas(customRound(Math.abs(currentTotalAdvisoryExpense + currentTotalInvestmentExpense - proposedTotalAdvisoryExpense - proposedTotalInvestmentExpense))) }}
+                  {{ $formatNumberWithCommas($customRound(Math.abs(currentTotalAdvisoryExpense + currentTotalInvestmentExpense - proposedTotalAdvisoryExpense - proposedTotalInvestmentExpense))) }}
                 </h4>
               </div>
             </div>
@@ -152,7 +152,7 @@
                 <h4>Current Portfolio</h4>
               </div>
               <div class="width-50">
-                <h4> {{ $formatNumberWithCommas(customRound(currentRealValue)) }}</h4>
+                <h4> {{ $formatNumberWithCommas($customRound(currentRealValue)) }}</h4>
               </div>
             </div>
             <div class="d-flex">
@@ -160,7 +160,7 @@
                 <h4>Proposed Portfolio</h4>
               </div>
               <div class="width-50">
-                <h4> {{ $formatNumberWithCommas(customRound(proposedRealValue)) }}</h4>
+                <h4> {{ $formatNumberWithCommas($customRound(proposedRealValue)) }}</h4>
               </div>
             </div>
             <hr>
@@ -170,7 +170,7 @@
               </div>
               <div class="width-50">
                 <h4>
-                  {{ $formatNumberWithCommas(customRound(Math.abs(currentRealValue - proposedRealValue))) }}
+                  {{ $formatNumberWithCommas($customRound(Math.abs(currentRealValue - proposedRealValue))) }}
                 </h4>
               </div>
             </div>
@@ -543,16 +543,16 @@ export default {
         this.proposedRealValue = proposedAccountValue;
         this.tableData.push({
           'year': i,
-          'currentAccountValue': this.$formatNumberWithCommas(this.customRound(currentAccountValue)),
-          'currentDistribution': this.$formatNumberWithCommas(this.customRound(currentDistribution)),
-          'currentAdvisoryExpense': this.$formatNumberWithCommas(this.customRound(currentAdvisoryExpense)),
-          'currentInvestmentExpense': this.$formatNumberWithCommas(this.customRound(currentInvestmentExpense)),
-          'currentTotalExpense': this.$formatNumberWithCommas(this.customRound(currentTotalExpense)),
-          'proposedAccountValue': this.$formatNumberWithCommas(this.customRound(proposedAccountValue)),
-          'proposedDistribution': this.$formatNumberWithCommas(this.customRound(proposedDistribution)),
-          'proposedAdvisoryExpense': this.$formatNumberWithCommas(this.customRound(proposedAdvisoryExpense)),
-          'proposedInvestmentExpense': this.$formatNumberWithCommas(this.customRound(proposedInvestmentExpense)),
-          'proposedTotalExpense': this.$formatNumberWithCommas(this.customRound(proposedTotalExpense)),
+          'currentAccountValue': this.$formatNumberWithCommas(this.$customRound(currentAccountValue)),
+          'currentDistribution': this.$formatNumberWithCommas(this.$customRound(currentDistribution)),
+          'currentAdvisoryExpense': this.$formatNumberWithCommas(this.$customRound(currentAdvisoryExpense)),
+          'currentInvestmentExpense': this.$formatNumberWithCommas(this.$customRound(currentInvestmentExpense)),
+          'currentTotalExpense': this.$formatNumberWithCommas(this.$customRound(currentTotalExpense)),
+          'proposedAccountValue': this.$formatNumberWithCommas(this.$customRound(proposedAccountValue)),
+          'proposedDistribution': this.$formatNumberWithCommas(this.$customRound(proposedDistribution)),
+          'proposedAdvisoryExpense': this.$formatNumberWithCommas(this.$customRound(proposedAdvisoryExpense)),
+          'proposedInvestmentExpense': this.$formatNumberWithCommas(this.$customRound(proposedInvestmentExpense)),
+          'proposedTotalExpense': this.$formatNumberWithCommas(this.$customRound(proposedTotalExpense)),
         });
         chartData.labels.push('Year ' + i);
         chartData.datasets[0].data.push(currentAccountValue.toFixed(2));
@@ -589,16 +589,6 @@ export default {
       }
       return true; // Validation passes
     },
-    customRound(value) {
-      const decimalPart = value - Math.floor(value);
-      if (decimalPart >= 0.5) {
-        // If decimal part is greater than or equal to 0.5, use Math.ceil()
-        return Math.ceil(value);
-      } else {
-        // If decimal part is less than 0.5, use Math.floor()
-        return Math.floor(value);
-      }
-    }
   },
 };
 </script>

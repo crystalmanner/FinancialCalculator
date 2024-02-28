@@ -35,6 +35,16 @@ const myPlugin = {
                 return "Please enter a valid integer"; // Validation failed
             }
         };
+        app.config.globalProperties.$customRound = (value) => {
+            const decimalPart = value - Math.floor(value);
+            if (decimalPart >= 0.5) {
+                // If decimal part is greater than or equal to 0.5, use Math.ceil()
+                return Math.ceil(value);
+            } else {
+                // If decimal part is less than 0.5, use Math.floor()
+                return Math.floor(value);
+            }
+        }
     },
 };
 

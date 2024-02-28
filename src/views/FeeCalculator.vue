@@ -52,16 +52,16 @@
             </div>
             <div class="d-flex">
               <h3>% Fee</h3><v-spacer></v-spacer>
-              <p>{{ $formatNumberWithCommas(totalPercentFee) }}</p>
+              <p>{{ $formatNumberWithCommas($customRound(totalPercentFee)) }}</p>
             </div>
             <div class="d-flex">
               <h3>Flat Fee</h3><v-spacer></v-spacer>
-              <p>{{ $formatNumberWithCommas(totalFlatFee) }}</p>
+              <p>{{ $formatNumberWithCommas($customRound(totalFlatFee)) }}</p>
             </div>
             <hr>
             <div class="d-flex">
               <h3>Difference</h3><v-spacer></v-spacer>
-              <p>{{ $formatNumberWithCommas(Math.abs(totalPercentFee - totalFlatFee)) }}</p>
+              <p>{{ $formatNumberWithCommas($customRound(Math.abs(totalPercentFee - totalFlatFee))) }}</p>
             </div>
             <div class="big-text mt-2">REAL VALUE&nbsp;
               <v-tooltip location="bottom">
@@ -74,16 +74,16 @@
             </div>
             <div class="d-flex">
               <h3>% Fee</h3><v-spacer></v-spacer>
-              <p>{{ $formatNumberWithCommas(percentAccountValue) }}</p>
+              <p>{{ $formatNumberWithCommas($customRound(percentAccountValue)) }}</p>
             </div>
             <div class="d-flex">
               <h3>Flat Fee</h3><v-spacer></v-spacer>
-              <p>{{ $formatNumberWithCommas(flatFeeAccountValue) }}</p>
+              <p>{{ $formatNumberWithCommas($customRound(flatFeeAccountValue)) }}</p>
             </div>
             <hr>
             <div class="d-flex">
               <h3>Difference</h3><v-spacer></v-spacer>
-              <p>{{ $formatNumberWithCommas(Math.abs(percentAccountValue - flatFeeAccountValue)) }}</p>
+              <p>{{ $formatNumberWithCommas($customRound(Math.abs(percentAccountValue - flatFeeAccountValue))) }}</p>
             </div>
             <v-tabs v-model="tab" color="primary" align-tabs="left">
               <v-tab :value="1">Chart</v-tab>
@@ -350,9 +350,9 @@ export default {
         advisoryFeeRate = advisoryFeeRate * (100 + this.annualIncreaseAdvisoryFeeRate) / 100;
         this.tableData.push({
           'year': 'Year ' + i,
-          'flatFeeAccountValue': this.$formatNumberWithCommas(flatFeeAccountValue),
-          'percentAccountValue': this.$formatNumberWithCommas(percentAccountValue),
-          'difference': this.$formatNumberWithCommas(flatFeeAccountValue - percentAccountValue),
+          'flatFeeAccountValue': this.$formatNumberWithCommas(this.$customRound(flatFeeAccountValue)),
+          'percentAccountValue': this.$formatNumberWithCommas(this.$customRound(percentAccountValue)),
+          'difference': this.$formatNumberWithCommas(this.$customRound(flatFeeAccountValue - percentAccountValue)),
         });
         chartData.labels.push('Year ' + i);
         chartData.datasets[0].data.push(percentAccountValue.toFixed(2));
