@@ -388,7 +388,7 @@ export default {
     },
     addYearsToDate(date, yearsToAdd) {
       const newDate = new Date(date);
-      newDate.setFullYear(newDate.getUTCFullYear() + yearsToAdd);
+      newDate.setUTCFullYear(newDate.getUTCFullYear() + yearsToAdd);
       return newDate;
     },
     dateBiggerThan1943(date) {
