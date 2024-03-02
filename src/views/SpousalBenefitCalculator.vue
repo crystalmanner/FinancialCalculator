@@ -253,7 +253,6 @@ export default {
       if (this.meetDivorcedBenefit) {
         retiredMonths = this.getMonthOffset(new Date(this.lowerEarnerDOB), new Date(this.lowerEarnerFileDate));
       } else {
-        // retiredMonths = this.getMonthOffset(new Date(this.lowerEarnerDOB), new Date(this.lowerEarnerFileDate));
         retiredMonths = this.getMonthOffset(new Date(this.lowerEarnerDOB), this.getMaxDate(new Date(this.lowerEarnerFileDate), new Date(this.higherEarnerFileDate)));
       }
       this.spousalExcessTitle = this.getYearsMonth(retiredMonths);
@@ -270,10 +269,6 @@ export default {
       if (!spousalPayment) {
         spousalPayment = 0;
       }
-      // retiredMonths = this.getMonthOffset(new Date(this.lowerEarnerDOB), new Date(this.lowerEarnerFileDate));
-      // if (!this.meetDivorcedBenefit) {
-      //   retiredMonths = this.getMonthOffset(new Date(this.lowerEarnerDOB), this.getMaxDate(new Date(this.lowerEarnerFileDate), new Date(this.higherEarnerFileDate)));
-      // }
 
       if (this.fullRetireMonths > retiredMonths) {
         if ((this.fullRetireMonths - retiredMonths) > 36) {
