@@ -241,7 +241,11 @@ export default {
         this.fullRetireMonths = 66 * 12;
       }
       let retiredMonths = this.getMonthOffset(new Date(this.lowerEarnerDOBSSA), new Date(this.lowerEarnerFileDate));
-
+      if (this.getMonthOffset(this.lowerEarnerDOBSSA, new Date(this.lowerEarnerFileDate)) === 62 * 12) {
+        if (this.lowerEarnerDOBSSA.getUTCDate() > 2) {
+          retiredMonths = retiredMonths + 1
+        }
+      }
       this.lowerEarnerPaymentTitle = this.getYearsMonth(retiredMonths);
       // get inflation lowerEarnerPayment
       for (let i = 62 * 12 + 1; i <= retiredMonths; i++) {
@@ -319,6 +323,7 @@ export default {
       if (this.getMonthOffset(this.lowerEarnerDOBSSA, new Date(this.lowerEarnerFileDate)) === 62 * 12) {
         if (this.lowerEarnerDOBSSA.getUTCDate() > 2) {
           startMonth = 62 * 12 + 1;
+          lowerRetireMonths = lowerRetireMonths + 1;
         }
       }
 

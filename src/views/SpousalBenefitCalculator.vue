@@ -106,6 +106,16 @@ export default {
           value: 'lowerEarnerAge',
           width: '160px',
         },
+        // {
+        //   title: 'Lower Earner FRA Benefit',
+        //   value: 'lowerEarnerFRABenefit',
+        //   align: 'center',
+        // },
+        // {
+        //   title: 'Higher Earner FRA Benefit',
+        //   value: 'higherEarnerFRABenefit',
+        //   align: 'center',
+        // },
         {
           title: 'Lower Earner Benefit From Own Record',
           value: 'lowerEarnerBenefitOwnRecord',
@@ -214,7 +224,6 @@ export default {
       let lowerEarnerBenefit = this.lowerEarnerBenefit;
       let dateOfBirth = new Date(this.lowerEarnerDOBSSA)
       let dateOfBirthMonth = dateOfBirth.getUTCMonth()
-
       if (new Date(this.lowerEarnerDOBSSA) > new Date('01/01/1960')) {
         // 67 years and 0 month
         this.fullRetireMonths = 67 * 12;
@@ -232,6 +241,11 @@ export default {
         this.fullRetireMonths = 66 * 12;
       }
       let retiredMonths = this.getMonthOffset(new Date(this.lowerEarnerDOBSSA), new Date(this.lowerEarnerFileDate));
+      if (this.getMonthOffset(this.lowerEarnerDOBSSA, new Date(this.lowerEarnerFileDate)) === 62 * 12) {
+        if (this.lowerEarnerDOBSSA.getUTCDate() > 2) {
+          retiredMonths = retiredMonths + 1
+        }
+      }
       this.lowerEarnerPaymentTitle = this.getYearsMonth(retiredMonths);
       // get inflation lowerEarnerPayment
       for (let i = 62 * 12 + 1; i <= retiredMonths; i++) {
@@ -305,11 +319,11 @@ export default {
       if (!this.meetDivorcedBenefit) {
         retiredMonths = this.getMonthOffset(new Date(this.lowerEarnerDOBSSA), this.getMaxDate(new Date(this.lowerEarnerFileDate), new Date(this.higherEarnerFileDate)));
       }
-
       let startMonth = 62 * 12;
       if (this.getMonthOffset(this.lowerEarnerDOBSSA, new Date(this.lowerEarnerFileDate)) === 62 * 12) {
         if (this.lowerEarnerDOBSSA.getUTCDate() > 2) {
           startMonth = 62 * 12 + 1;
+          lowerRetireMonths = lowerRetireMonths + 1;
         }
       }
 
@@ -338,9 +352,7 @@ export default {
 
           let lowerEarnerPayment = this.getLowerEarnerPayment(lowerEarnerFRABenefit, this.fullRetireMonths, lowRetiredMonths);
           lowerEarnerBenefitSpousalPayment = Math.max(spousalPayment + parseFloat(lowerEarnerFRABenefit) - lowerEarnerPayment, 0);
-
         }
-
 
         if ((lowerRetireMonths < this.fullRetireMonths) && (higherRetireMonths >= this.fullRetireMonths) && !this.meetDivorcedBenefit) {
           lowerEarnerBenefitSpousalPayment = Math.max(spousalPayment, 0)
