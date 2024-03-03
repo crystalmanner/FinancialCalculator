@@ -221,9 +221,7 @@ export default {
     calculate() {
       this.lowerEarnerDOBSSA = new Date(this.lowerEarnerDOB);
       if (this.getMonthOffset(this.lowerEarnerDOBSSA, new Date(this.lowerEarnerFileDate)) === 62 * 12) {
-        if (this.lowerEarnerDOBSSA.getUTCDate() === 1) {
-          this.lowerEarnerDOBSSA.setUTCMonth(this.lowerEarnerDOBSSA.getUTCMonth() - 1)
-        } else if (this.lowerEarnerDOBSSA.getUTCDate() > 2) {
+        if (this.lowerEarnerDOBSSA.getUTCDate() > 2) {
           this.lowerEarnerDOBSSA.setUTCMonth(this.lowerEarnerDOBSSA.getUTCMonth() + 1)
         }
       }
