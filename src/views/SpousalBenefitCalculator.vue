@@ -210,11 +210,6 @@ export default {
     },
     calculate() {
       this.lowerEarnerDOBSSA = new Date(this.lowerEarnerDOB);
-      if (this.getMonthOffset(this.lowerEarnerDOBSSA, new Date(this.lowerEarnerFileDate)) === 62 * 12) {
-        if (this.lowerEarnerDOBSSA.getUTCDate() > 2) {
-          this.lowerEarnerDOBSSA.setUTCMonth(this.lowerEarnerDOBSSA.getUTCMonth() + 1)
-        }
-      }
       let higherEarnerBenefit = this.higherEarnerBenefit;
       let lowerEarnerBenefit = this.lowerEarnerBenefit;
       let dateOfBirth = new Date(this.lowerEarnerDOBSSA)
@@ -311,7 +306,14 @@ export default {
         retiredMonths = this.getMonthOffset(new Date(this.lowerEarnerDOBSSA), this.getMaxDate(new Date(this.lowerEarnerFileDate), new Date(this.higherEarnerFileDate)));
       }
 
-      for (let i = 62 * 12; i <= 70 * 12; i++) {
+      let startMonth = 62 * 12;
+      if (this.getMonthOffset(this.lowerEarnerDOBSSA, new Date(this.lowerEarnerFileDate)) === 62 * 12) {
+        if (this.lowerEarnerDOBSSA.getUTCDate() > 2) {
+          startMonth = 62 * 12 + 1;
+        }
+      }
+
+      for (let i = startMonth; i <= 70 * 12; i++) {
 
         let spousalPayment = Math.max(parseFloat(higherEarnerBenefit) / 2 - parseFloat(lowerEarnerFRABenefit), 0);
         if (!this.meetDivorcedBenefit && !this.higherEarnerFileDate) {
