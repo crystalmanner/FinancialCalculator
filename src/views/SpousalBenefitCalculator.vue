@@ -183,15 +183,6 @@ export default {
   },
   created() {
     this.$nextTick(() => {
-      const currentDate = new Date();
-      const currentMonth = currentDate.getMonth();
-      const currentYear = currentDate.getFullYear();
-      this.loanStartDate = {
-        month: currentMonth,
-        year: currentYear
-      };
-      this.additionalYearlyPaymentMonth = (currentMonth + 1).toString().padStart(2, '0');  // Adding 1 to make it 1-12
-      this.additionalOneTimePaymentDate = this.loanStartDate;
       this.calculate();
     });
   },

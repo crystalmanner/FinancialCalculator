@@ -29,8 +29,21 @@
               label="Lower Earner Full Retirement Age Benefit" type="text" prefix="$"
               hint="The full retirement age benefit the lower earning spouse earned from their own work"
               @blur="formatLowerEarnerBenefit" @input="stripLowerEarnerBenefitFormatting" dense></v-text-field>
+            <v-radio-group
+              v-model="benefitEstimateFrom"
+            >
+              <v-radio
+                label="Benefit estimate from this year"
+                value="currentYear"
+              ></v-radio>
+              <v-radio
+                label="Benefit estimate from last year"
+                value="lastYear"
+              ></v-radio>
+            </v-radio-group>
             <v-text-field v-model.number="inflationRate" :rules="[$numberGreaterThanNegativeRule, numberSmallerThan10]"
               label="Inflation Rate" suffix="%" dense></v-text-field>
+           
             <v-checkbox v-model="meetDivorcedBenefit"
               label="Do you meet the qualifications for a divorced spouse benefit?"></v-checkbox>
           </v-form>
@@ -74,6 +87,8 @@
 </template>
 
 <script>
+// import axios from 'axios';
+import inflations from '../data/inflations.json';
 import Header from '@/components/Header.vue'
 import '@vuepic/vue-datepicker/dist/main.css';
 
@@ -141,10 +156,12 @@ export default {
       ],
       lowerEarnerPaymentTitle: "",
       spousalExcessTitle: "",
-      inflationRate: 1,
+      inflationRate: 2,
       fullRetireMonths: 0,
       lowerEarnerDOBSSA: "1960-01-15",
       higherEarnerDOBSSA: "1960-01-15",
+      inflations: inflations,
+      benefitEstimateFrom: 'currentYear',
     };
   },
   watch: {
@@ -176,22 +193,23 @@ export default {
       this.$refs.form.validate();
       this.calculate();
     },
-    inflationRate() {
+    inflationRate(val) {
       this.$refs.form.validate();
+      for (let i = 2024; i < 9999; i++) {
+        this.inflations[i] = this.inflations[i - 1] * (100 + val) / 100;
+      }
       this.calculate();
     },
+    benefitEstimateFrom() {
+      this.$refs.form.validate();
+      this.calculate();
+    }
   },
   created() {
     this.$nextTick(() => {
-      const currentDate = new Date();
-      const currentMonth = currentDate.getMonth();
-      const currentYear = currentDate.getFullYear();
-      this.loanStartDate = {
-        month: currentMonth,
-        year: currentYear
-      };
-      this.additionalYearlyPaymentMonth = (currentMonth + 1).toString().padStart(2, '0');  // Adding 1 to make it 1-12
-      this.additionalOneTimePaymentDate = this.loanStartDate;
+      for (let i = 2024; i < 9999; i++) {
+        this.inflations[i] = this.inflations[i - 1] * (100 + this.inflationRate) / 100;
+      }
       this.calculate();
     });
   },
@@ -218,10 +236,17 @@ export default {
       // Update the displayed value to keep the cursor in the correct position
       this.formattedLowerEarnerBenefit = digits;
     },
-    calculate() {
+    async calculate() {
       this.lowerEarnerDOBSSA = new Date(this.lowerEarnerDOB);
+      
       let higherEarnerBenefit = this.higherEarnerBenefit;
       let lowerEarnerBenefit = this.lowerEarnerBenefit;
+      let currentDate = new Date();
+      let currentYear = currentDate.getUTCFullYear();
+      if (this.benefitEstimateFrom === 'lastYear') {
+        higherEarnerBenefit = this.higherEarnerBenefit * this.inflations[currentYear] / this.inflations[currentYear -1];
+        lowerEarnerBenefit = this.lowerEarnerBenefit * this.inflations[currentYear] / this.inflations[currentYear -1];
+      }
       let dateOfBirth = new Date(this.lowerEarnerDOBSSA)
       let dateOfBirthMonth = dateOfBirth.getUTCMonth()
       if (new Date(this.lowerEarnerDOBSSA) > new Date('01/01/1960')) {
@@ -247,13 +272,12 @@ export default {
         }
       }
       this.lowerEarnerPaymentTitle = this.getYearsMonth(retiredMonths);
+      // inflationRate between 2024 and 2027
+      let inflationRate = this.inflations[this.getYearAfterAddingMonths(this.lowerEarnerDOBSSA, retiredMonths)] / this.inflations[currentYear];
+      lowerEarnerBenefit = lowerEarnerBenefit * inflationRate
+      higherEarnerBenefit = higherEarnerBenefit * inflationRate
+
       // get inflation lowerEarnerPayment
-      for (let i = 62 * 12 + 1; i <= retiredMonths; i++) {
-        if (((i + dateOfBirthMonth) % 12 === 0)) {
-          lowerEarnerBenefit = lowerEarnerBenefit * (100 + this.inflationRate) / 100;
-          higherEarnerBenefit = higherEarnerBenefit * (100 + this.inflationRate) / 100;
-        }
-      }
       let spousalPayment = Math.max(parseFloat(higherEarnerBenefit) / 2 - parseFloat(lowerEarnerBenefit), 0);
       if (!this.meetDivorcedBenefit && !this.higherEarnerFileDate) {
         spousalPayment = 0;
@@ -266,19 +290,21 @@ export default {
       // get inflation spousal payment
       higherEarnerBenefit = this.higherEarnerBenefit;
       lowerEarnerBenefit = this.lowerEarnerBenefit;
-
+      if (this.benefitEstimateFrom === 'lastYear') {
+        higherEarnerBenefit = this.higherEarnerBenefit * this.inflations[currentYear] / this.inflations[currentYear -1];
+        lowerEarnerBenefit = this.lowerEarnerBenefit * this.inflations[currentYear] / this.inflations[currentYear -1];
+      }
       if (this.meetDivorcedBenefit) {
         retiredMonths = this.getMonthOffset(new Date(this.lowerEarnerDOBSSA), new Date(this.lowerEarnerFileDate));
       } else {
         retiredMonths = this.getMonthOffset(new Date(this.lowerEarnerDOBSSA), this.getMaxDate(new Date(this.lowerEarnerFileDate), new Date(this.higherEarnerFileDate)));
       }
       this.spousalExcessTitle = this.getYearsMonth(retiredMonths);
-      for (let i = 62 * 12 + 1; i <= retiredMonths; i++) {
-        if (((i + dateOfBirthMonth) % 12 === 0)) {
-          lowerEarnerBenefit = lowerEarnerBenefit * (100 + this.inflationRate) / 100;
-          higherEarnerBenefit = higherEarnerBenefit * (100 + this.inflationRate) / 100;
-        }
-      }
+
+      inflationRate = this.inflations[this.getYearAfterAddingMonths(this.lowerEarnerDOBSSA, retiredMonths)] / this.inflations[currentYear];
+      lowerEarnerBenefit = lowerEarnerBenefit * inflationRate
+      higherEarnerBenefit = higherEarnerBenefit * inflationRate
+
       spousalPayment = Math.max(parseFloat(higherEarnerBenefit) / 2 - parseFloat(lowerEarnerBenefit), 0);
       if (!this.meetDivorcedBenefit && !this.higherEarnerFileDate) {
         spousalPayment = 0;
@@ -309,8 +335,15 @@ export default {
     },
     updateTable() {
       this.tableData = [];
-      let lowerEarnerFRABenefit = this.lowerEarnerBenefit;
-      let higherEarnerBenefit = this.higherEarnerBenefit;
+      let lowerEarnerCurrentYearBenefit = this.lowerEarnerBenefit;
+      let higherEarnerCurrentYearBenefit = this.higherEarnerBenefit;
+
+      let currentDate = new Date();
+      let currentYear = currentDate.getUTCFullYear();
+      if (this.benefitEstimateFrom === 'lastYear') {
+        higherEarnerCurrentYearBenefit = this.higherEarnerBenefit * this.inflations[currentYear] / this.inflations[currentYear -1];
+        lowerEarnerCurrentYearBenefit = this.lowerEarnerBenefit * this.inflations[currentYear] / this.inflations[currentYear -1];
+      }
       let dateOfBirth = new Date(this.lowerEarnerDOBSSA)
       let dateOfBirthMonth = dateOfBirth.getUTCMonth()
       let lowerRetireMonths = this.getMonthOffset(new Date(this.lowerEarnerDOBSSA), new Date(this.lowerEarnerFileDate))
@@ -328,7 +361,9 @@ export default {
       }
 
       for (let i = startMonth; i <= 70 * 12; i++) {
-
+        let inflationRate = this.inflations[this.getYearAfterAddingMonths(this.lowerEarnerDOBSSA, i)] / this.inflations[currentYear];
+        let lowerEarnerFRABenefit = lowerEarnerCurrentYearBenefit * inflationRate;
+        let higherEarnerBenefit = higherEarnerCurrentYearBenefit * inflationRate;
         let spousalPayment = Math.max(parseFloat(higherEarnerBenefit) / 2 - parseFloat(lowerEarnerFRABenefit), 0);
         if (!this.meetDivorcedBenefit && !this.higherEarnerFileDate) {
           spousalPayment = 0;
@@ -369,10 +404,7 @@ export default {
           'lowerEarnerBenefitSpousalPayment': this.$formatNumberWithCommas(this.$customRound((i < retiredMonths) ? 0 : lowerEarnerBenefitSpousalPayment)),
           'totalBenefitPayment': this.$formatNumberWithCommas(this.$customRound(lowerEarnerBenefitOwnRecord + ((i < retiredMonths) ? 0 : lowerEarnerBenefitSpousalPayment))),
         })
-        if (((i + dateOfBirthMonth) % 12 === 11)) {
-          lowerEarnerFRABenefit = lowerEarnerFRABenefit * (100 + this.inflationRate) / 100;
-          higherEarnerBenefit = higherEarnerBenefit * (100 + this.inflationRate) / 100;
-        }
+        
       }
     },
     addMonthsToDate(dateString, monthsToAdd) {
@@ -381,7 +413,12 @@ export default {
       date.setUTCMonth(date.getUTCMonth() + monthsToAdd);
       return date.toLocaleString('en-US', { month: 'long', timeZone: 'UTC' }) + ' ' + date.getUTCFullYear();
     },
-
+    getYearAfterAddingMonths(dataString, monthsToAdd) {
+      let date = new Date(dataString);
+      date.setUTCDate(15);
+      date.setUTCMonth(date.getUTCMonth() + monthsToAdd);
+      return date.getUTCFullYear();
+    },
     getLowerEarnerPayment(lowerEarnerBenefit, fullRetireMonths, retiredMonths) {
       if (fullRetireMonths > retiredMonths) {
         if ((fullRetireMonths - retiredMonths) > 36) {
