@@ -4,11 +4,9 @@
       <Header />
       <h2>Social Security Spousal Benefits Calculator</h2>
       <hr>
-      <v-row class="pa-2 mt-2">
-        <v-col cols="12" lg="4" md="4" sm="12">
-
-          <v-form ref="form" v-model="validForm">
-
+      <v-form ref="form" v-model="validForm">
+        <v-row class="pa-2 mt-2">
+          <v-col cols="12" lg="6" md="6" sm="12">
             <v-text-field v-model="higherEarnerDOB" label="Higher Earner DOB" type="date" :rules="[dateBiggerThan1943]"
               min="1943-01-02"></v-text-field>
 
@@ -20,8 +18,9 @@
 
             <v-text-field v-model="lowerEarnerFileDate" label="Date Lower Earner Will File" type="date"
               :rules="[lowerEarnerFileDateRule]"></v-text-field>
-
-            <v-text-field class="mt-2" v-model="formattedHigherEarnerBenefit" :rules="[$textGreaterThanNegativeRule]"
+          </v-col>
+          <v-col cols="12" lg="6" md="6" sm="12">
+            <v-text-field v-model="formattedHigherEarnerBenefit" :rules="[$textGreaterThanNegativeRule]"
               label="Higher Earner Full Retirement Age Benefit" type="text" prefix="$"
               hint="The full retirement age benefit the higher earning spouse earned from their own work"
               @blur="formatHigherEarnerBenefit" @input="stripHigherEarnerBenefitFormatting" dense></v-text-field>
@@ -43,13 +42,21 @@
             </v-radio-group>
             <v-text-field v-model.number="inflationRate" :rules="[$numberGreaterThanNegativeRule, numberSmallerThan10]"
               label="Inflation Rate" suffix="%" dense></v-text-field>
-           
+          
             <v-checkbox v-model="meetDivorcedBenefit"
               label="Do you meet the qualifications for a divorced spouse benefit?"></v-checkbox>
-          </v-form>
-        </v-col>
-        <v-col cols="12" lg="8" md="8" sm="12">
+          </v-col>
+          <v-col cols="12" lg="6" md="6" sm="12">
+            
+          </v-col>
+        </v-row>
+      </v-form>
+      <hr>
+      
+      <v-row class="pa-2 mt-2">
+        <v-col cols="12" lg="12" md="12" sm="12">
           <div v-if="validForm">
+            <h1>Results</h1>
             <div class="result-section">
               <div class="title">Benefit from Lower Earner Work at <i>{{ lowerEarnerPaymentTitle }}</i></div>
               <div class="result-value mb-2">
@@ -60,16 +67,14 @@
               <p class="result-value mb-1">{{ $formatNumberWithCommas($customRound(spousalExcess)) }}
               </p>
             </div>
+             <v-data-table :headers="tableHeaders" :items="tableData" :items-per-page="-1"
+            :items-per-page-options="pageOptions" class="spousal-benefit-table mt-4">
+          </v-data-table>
           </div>
           <div v-else class="mt-2 text-center">
             <h3 class="text-red-accent-2">Please input valid values.</h3>
             <p>{{ errorNotification }}</p>
           </div>
-        </v-col>
-        <v-col v-if="validForm" cols="12" lg="12" md="12" sm="12">
-          <v-data-table :headers="tableHeaders" :items="tableData" :items-per-page="-1"
-            :items-per-page-options="pageOptions" class="spousal-benefit-table mt-4">
-          </v-data-table>
         </v-col>
         <v-col cols="12" lg="12" md="12" sm="12">
           <p class="text-subtitle-2 text-center mt-6 mb-4">Disclaimer: This calculator assumes that lower earning spouse
