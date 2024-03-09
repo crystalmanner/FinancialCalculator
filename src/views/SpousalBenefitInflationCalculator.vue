@@ -18,6 +18,7 @@
 
             <v-text-field v-model="lowerEarnerFileDate" label="Date Lower Earner Will File" type="date"
               :rules="[lowerEarnerFileDateRule]"></v-text-field>
+            <v-checkbox v-model="meetDivorcedBenefit" label="Do you meet the qualifications for a divorced spouse benefit?"></v-checkbox>
           </v-col>
           <v-col cols="12" lg="6" md="6" sm="12">
             <v-text-field v-model="formattedHigherEarnerBenefit" :rules="[$textGreaterThanNegativeRule]"
@@ -28,6 +29,7 @@
               label="Lower Earner Full Retirement Age Benefit" type="text" prefix="$"
               hint="The full retirement age benefit the lower earning spouse earned from their own work"
               @blur="formatLowerEarnerBenefit" @input="stripLowerEarnerBenefitFormatting" dense></v-text-field>
+            <p class="ml-1">Age of Benefit Estimate: Current or Previous Year?</p>
             <v-radio-group
               v-model="benefitEstimateFrom"
             >
@@ -40,19 +42,22 @@
                 value="lastYear"
               ></v-radio>
             </v-radio-group>
-            <v-text-field v-model.number="inflationRate" :rules="[$numberGreaterThanNegativeRule, numberSmallerThan10]"
-              label="Inflation Rate" suffix="%" dense></v-text-field>
-          
-            <v-checkbox v-model="meetDivorcedBenefit"
-              label="Do you meet the qualifications for a divorced spouse benefit?"></v-checkbox>
-          </v-col>
-          <v-col cols="12" lg="6" md="6" sm="12">
-            
+            <div class="d-flex align-center">
+              <v-text-field class="mr-2" label="Average Annual Increase" v-model.number="inflationRate" :rules="[$numberGreaterThanNegativeRule, numberSmallerThan10]"
+              suffix="%" dense></v-text-field>
+              <p class="big-text mb-4">
+                <v-tooltip location="top">
+                  <template v-slot:activator="{ props }">
+                    <v-icon icon="mdi-help-circle" class="cursor-pointer" size="md" v-bind="props" start />
+                  </template>
+                  <span>Enter the estimated annual cost of living increase to Social Security Benefits</span>
+                </v-tooltip>
+              </p>
+            </div>
           </v-col>
         </v-row>
       </v-form>
       <hr>
-      
       <v-row class="pa-2 mt-2">
         <v-col cols="12" lg="12" md="12" sm="12">
           <div v-if="validForm">
@@ -67,9 +72,8 @@
               <p class="result-value mb-1">{{ $formatNumberWithCommas($customRound(spousalExcess)) }}
               </p>
             </div>
-             <v-data-table :headers="tableHeaders" :items="tableData" :items-per-page="-1"
-            :items-per-page-options="pageOptions" class="spousal-benefit-table mt-4">
-          </v-data-table>
+             <v-data-table :headers="tableHeaders" :items="tableData" :items-per-page="-1" :items-per-page-options="pageOptions" class="spousal-benefit-table mt-4">
+            </v-data-table>
           </div>
           <div v-else class="mt-2 text-center">
             <h3 class="text-red-accent-2">Please input valid values.</h3>
@@ -77,8 +81,7 @@
           </div>
         </v-col>
         <v-col cols="12" lg="12" md="12" sm="12">
-          <p class="text-subtitle-2 text-center mt-6 mb-4">Disclaimer: This calculator assumes that lower earning spouse
-            has
+          <p class="text-subtitle-2 text-center mt-6 mb-4">Disclaimer: This calculator assumes that lower earning spouse has
             met the
             all of eligibility criteria for spousal benefits. The calculation provided is intended for illustrative
             purposes only. It is not intended to provide specific financial, investment, tax, legal, or accounting advice.
