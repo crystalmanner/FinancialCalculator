@@ -25,7 +25,7 @@
               label="Higher Earner Full Retirement Age Benefit" type="text" prefix="$"
               hint="The full retirement age benefit the higher earning spouse earned from their own work"
               @blur="formatHigherEarnerBenefit" @input="stripHigherEarnerBenefitFormatting" dense></v-text-field>
-            <v-text-field class="mt-2" v-model="formattedLowerEarnerBenefit" :rules="[$textGreaterThanNegativeRule]"
+            <v-text-field v-model="formattedLowerEarnerBenefit" :rules="[$textGreaterThanNegativeRule]"
               label="Lower Earner Full Retirement Age Benefit" type="text" prefix="$"
               hint="The full retirement age benefit the lower earning spouse earned from their own work"
               @blur="formatLowerEarnerBenefit" @input="stripLowerEarnerBenefitFormatting" dense></v-text-field>
