@@ -96,7 +96,7 @@
 
 <script>
 // import axios from 'axios';
-import inflations from '../data/inflations.json';
+// import inflations from '../data/inflations.json';
 import Header from '@/components/Header.vue'
 import '@vuepic/vue-datepicker/dist/main.css';
 
@@ -168,7 +168,8 @@ export default {
       fullRetireMonths: 0,
       lowerEarnerDOBSSA: "1960-01-15",
       higherEarnerDOBSSA: "1960-01-15",
-      inflations: inflations,
+      // inflations: inflations,
+      inflations: {},
       benefitEstimateFrom: 'currentYear',
     };
   },
@@ -203,7 +204,11 @@ export default {
     },
     inflationRate(val) {
       this.$refs.form.validate();
-      for (let i = 2024; i < 9999; i++) {
+      // for (let i = 2024; i < 9999; i++) {
+      //   this.inflations[i] = this.inflations[i - 1] * (100 + val) / 100;
+      // }
+      this.inflations[1999] = 100;
+      for (let i = 2000; i < 9999; i++) {
         this.inflations[i] = this.inflations[i - 1] * (100 + val) / 100;
       }
       this.calculate();
@@ -215,7 +220,11 @@ export default {
   },
   created() {
     this.$nextTick(() => {
-      for (let i = 2024; i < 9999; i++) {
+      // for (let i = 2024; i < 9999; i++) {
+      //   this.inflations[i] = this.inflations[i - 1] * (100 + this.inflationRate) / 100;
+      // }
+      this.inflations[1999] = 100;
+      for (let i = 2000; i < 9999; i++) {
         this.inflations[i] = this.inflations[i - 1] * (100 + this.inflationRate) / 100;
       }
       this.calculate();
