@@ -18,7 +18,7 @@
 
             <v-text-field v-model="lowerEarnerFileDate" label="Date Lower Earner Will File" type="date"
               :rules="[lowerEarnerFileDateRule]"></v-text-field>
-            <v-checkbox v-model="meetDivorcedBenefit" label="Do you meet the qualifications for a divorced spouse benefit?"></v-checkbox>
+            <v-checkbox v-model="meetDivorcedBenefit" class="check-box" label="Do you meet the qualifications for a divorced spouse benefit?"></v-checkbox>
           </v-col>
           <v-col cols="12" lg="6" md="6" sm="12">
             <v-text-field v-model="formattedHigherEarnerBenefit" :rules="[$textGreaterThanNegativeRule]"
@@ -43,7 +43,7 @@
               ></v-radio>
             </v-radio-group>
             <div class="d-flex align-center">
-              <v-text-field class="mr-2" label="Average Annual Increase" v-model.number="inflationRate" :rules="[$numberGreaterThanNegativeRule, numberSmallerThan10]"
+              <v-text-field class="mr-2" label="Average COLA %" v-model.number="inflationRate" :rules="[$numberGreaterThanNegativeRule, numberSmallerThan10]"
               suffix="%" dense></v-text-field>
               <p class="big-text mb-4">
                 <v-tooltip location="top">
@@ -61,7 +61,6 @@
       <v-row class="pa-2 mt-2">
         <v-col cols="12" lg="12" md="12" sm="12">
           <div v-if="validForm">
-            <h1>Results</h1>
             <div class="result-section">
               <div class="title">Benefit from Lower Earner Work at <i>{{ lowerEarnerPaymentTitle }}</i></div>
               <div class="result-value mb-2">
@@ -601,5 +600,9 @@ export default {
 
 .spousal-benefit-table tbody tr td:nth-child(7) {
   background-color: #D6EBD5;
+}
+
+.check-box {
+  margin-top: -11px;
 }
 </style>
