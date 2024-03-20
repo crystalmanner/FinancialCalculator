@@ -163,7 +163,7 @@ export default {
       ],
       lowerEarnerPaymentTitle: "",
       spousalExcessTitle: "",
-      inflationRate: 2,
+      inflationRate: 0,
       fullRetireMonths: 0,
       lowerEarnerDOBSSA: "1960-01-15",
       higherEarnerDOBSSA: "1960-01-15",
