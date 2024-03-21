@@ -315,6 +315,17 @@ export default {
       } else {
         retiredMonths = this.getMonthOffset(new Date(this.lowerEarnerDOBSSA), this.getMaxDate(new Date(this.lowerEarnerFileDate), new Date(this.higherEarnerFileDate)));
       }
+
+      let lowerEarnerFileDate = new Date(this.lowerEarnerFileDate)
+      if (!this.meetDivorcedBenefit) {
+        lowerEarnerFileDate = this.getMaxDate(new Date(this.lowerEarnerFileDate), new Date(this.higherEarnerFileDate));
+      }
+      if (this.getMonthOffset(this.lowerEarnerDOBSSA, lowerEarnerFileDate) === 62 * 12) {
+        if (this.lowerEarnerDOBSSA.getUTCDate() > 2) {
+          retiredMonths = retiredMonths + 1;
+        }
+      }
+
       this.spousalExcessTitle = this.getYearsMonth(retiredMonths);
 
       inflationRate = this.inflations[this.getYearAfterAddingMonths(this.lowerEarnerDOBSSA, retiredMonths)] / this.inflations[currentYear];
