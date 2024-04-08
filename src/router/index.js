@@ -36,6 +36,11 @@ const routes = [
         name: 'SocialSecurityBreakEvenCalculator',
         component: () => import('@/views/SocialSecurityBreakEvenCalculator.vue'),
       },
+      {
+        path: '/test',
+        name: 'Test',
+        component: () => import('@/views/Test.vue'),
+      },
     ],
   },
 ]
